@@ -1,26 +1,132 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { User } from 'src/user/entities/user.entity';
+import { Genre } from './entities/genres.entity';
+import { Movie } from './entities/movies.entity';
+import { MovieGenre } from './entities/movie-genre.entity';
+import { Rating } from 'src/user/entities/rating.entity';
+import { UserRepository } from 'src/user/entities/user.repository';
+import { GenreRepository } from './entities/genres.repository';
+import { MovieRepository } from './entities/movies.repository';
+import { MovieGenreRepository } from './entities/movie-genre.repository';
+import { RatingRepository } from 'src/user/entities/rating.repository';
 
 @Injectable()
 export class MovieService {
-  create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly genreRepository: GenreRepository,
+    private readonly movieRepository: MovieRepository,
+    private readonly movieGenreRepository: MovieGenreRepository,
+    private readonly ratingRepository: RatingRepository,
+  ) {}
+  async findGenres(): Promise<Genre[]> {
+    return this.genreRepository.find();
   }
 
-  findAll() {
-    return `This action returns all movie`;
+  async findGenresName(): Promise<string[]> {
+    const genres = await this.genreRepository.find();
+    return genres.map(genre => genre.name);
+  }
+ 
+  async findAllMovies(): Promise<Movie[]> {
+    return this.movieRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  async findMovieById(id: number): Promise<any> {
+    const movie = this.movieRepository.findOne({
+        where: {
+            id: id,
+        }
+    });
+    if (!movie) {
+        throw new NotFoundException(`Movie with ID ${id} not found`);
+      }
+    // Buscar todas as avaliações relacionadas ao filme
+    const ratings = await this.ratingRepository.find({
+      where: { movieId: id },
+    });
+
+    if (ratings.length === 0) {
+      return movie;
+    }
+
+    // Extrair os valores de avaliação e calcular a média
+    const votesArray = ratings.map(rating => rating.rating); // Supondo que a coluna de valor de avaliação é 'value'
+    const averageRating = votesArray.length
+      ? (votesArray.reduce((a, b) => a + b, 0) / votesArray.length).toFixed(1)
+      : null;
+
+    // Adicionar a média das avaliações ao objeto do filme
+    return { ...movie, rating: averageRating };
   }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} movie`;
+  // Agora filtrar filmes por genero
+
+  async findMoviesByGenreId(genreId: number): Promise<Movie[]> {
+    const movieGenres = await this.movieGenreRepository.find({
+        where: { genre: { id: genreId } }, relations: ['movie'],
+    });
+    const movieIds = movieGenres.map(movieGenre => movieGenre.movie.id);
+
+    if (movieIds.length === 0) {
+      return [];
+    }
+
+    return this.movieRepository.findByIds(movieIds);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} movie`;
+  async findMoviesByGenreName(genreName: string): Promise<Movie[]> {
+    const genre = await this.genreRepository.findOne({ where: { name: genreName } });
+    if (!genre) {
+      return [];
+    }
+    
+    const movieGenres = await this.movieGenreRepository.find({
+      where: { genre: { id: genre.id } }, relations: ['movie']
+    });
+    const movieIds = movieGenres.map(movieGenre => movieGenre.movie.id);
+    
+    if (movieIds.length === 0) {
+      return [];
+    }
+
+    return this.movieRepository.findByIds(movieIds);
+  }
+
+  // Agora funções como votar, adicionar, remover e editar filmes:
+
+  async vote(userId: number, movieId: number, voteValue: number): Promise<void> {
+    // Verifica se o usuário existe
+    const user = await this.userRepository.findOne(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Verifica se o usuário tem permissão para votar
+    if (!user.authority.vote) {
+      throw new ForbiddenException('User does not have permission to vote');
+    }
+    
+    // Verifica o se o valor que ele votou esta dentro de 1 e 5 e é um inteiro:
+    if (!Number.isInteger(voteValue) || voteValue < 1 || voteValue > 5) {
+        throw new ForbiddenException('You need chosse a value between 1 and 5')
+    }
+
+    // Verifica se o filme existe
+    const movie = await this.movieRepository.findOne({ where: { id: movieId } });
+    if (!movie) {
+      throw new NotFoundException(`Movie with ID ${movieId} not found`);
+    }
+
+    // Cria ou atualiza a classificação do usuário para o filme
+    let rating = await this.ratingRepository.findOne({ where: { userId, movieId } });
+    if (rating) {
+      rating.rating = voteValue;
+    } else {
+      rating = this.ratingRepository.create({ userId, movieId, rating: voteValue });
+    }
+    await this.ratingRepository.save(rating);
   }
 }

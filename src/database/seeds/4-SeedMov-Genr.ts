@@ -1,7 +1,7 @@
 import { getRepository, MigrationInterface, QueryRunner } from 'typeorm';
 import { Genre } from 'src/movie/entities/genres.entity';
 import { Movie } from 'src/movie/entities/movies.entity';
-import { MovieGenre } from 'src/movie/entities/movie-gente.entity';
+import { MovieGenre } from 'src/movie/entities/movie-genre.entity';
 
 export class MovieInGenre implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
