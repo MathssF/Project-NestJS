@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Put, NotFoundException } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -56,5 +56,24 @@ export class MovieController {
     @Body('rating', ParseIntPipe) rating: number,
   ): Promise<void> {
     await this.movieService.vote(userId, movieId, rating);
+  }
+
+  @Post()
+  async create(@Body() movieData: Partial<Movie>): Promise<Movie> {
+    return await this.movieService.create(movieData);
+  }
+
+  @Put(':id')
+  async edit(@Param('id') id: number, @Body() movieData: Partial<Movie>): Promise<Movie> {
+    return await this.movieService.edit(id, movieData);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: number): Promise<{ success: boolean }> {
+    const result = await this.movieService.delete(id);
+    if (!result.success) {
+      throw new NotFoundException('Movie not found');
+    }
+    return result;
   }
 }

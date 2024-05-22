@@ -129,4 +129,27 @@ export class MovieService {
     }
     await this.ratingRepository.save(rating);
   }
+
+  async create(movieData: Partial<Movie>): Promise<Movie> {
+    const movie = this.movieRepository.create(movieData);
+    return await this.movieRepository.save(movie);
+  }
+
+  async edit(id: number, movieData: Partial<Movie>): Promise<Movie> {
+    const movie = await this.movieRepository.findOne({ where: { id: id } });
+    if (!movie) {
+      throw new NotFoundException('Movie not found');
+    }
+    Object.assign(movie, movieData);
+    return await this.movieRepository.save(movie);
+  }
+
+  async delete(id: number): Promise<{ success: boolean }> {
+    const movie = await this.movieRepository.findOne({ where: { id: id } });
+    if (!movie) {
+      throw new NotFoundException('Movie not found');
+    }
+    await this.movieRepository.remove(movie);
+    return { success: true };
+  }
 }
