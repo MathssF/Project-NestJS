@@ -9,8 +9,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class UserService {
   constructor(
-    // @InjectRepository(User)
-    // private readonly userRepository: Repository<User>,
     private readonly userRepository: UserRepository,
   ) {}
 

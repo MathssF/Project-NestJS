@@ -2,7 +2,9 @@
   "name": "my-project",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Matheus Flores",
+  "linkedin": "https://www.linkedin.com/in/matheus-oaf/",
+  "github": "https://github.com/MathssF",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

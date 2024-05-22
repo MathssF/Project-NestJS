@@ -1,11 +1,11 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
-import { User } from 'src/user/entities/user.entity';
+// import { CreateMovieDto } from './dto/create-movie.dto';
+// import { UpdateMovieDto } from './dto/update-movie.dto';
+// import { User } from 'src/user/entities/user.entity';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
-import { MovieGenre } from './entities/movie-genre.entity';
-import { Rating } from 'src/user/entities/rating.entity';
+// import { MovieGenre } from './entities/movie-genre.entity';
+// import { Rating } from 'src/user/entities/rating.entity';
 import { UserRepository } from 'src/user/entities/user.repository';
 import { GenreRepository } from './entities/genres.repository';
 import { MovieRepository } from './entities/movies.repository';
