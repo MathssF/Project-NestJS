@@ -6,10 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "typeorm:migration:generate": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:generate",
     "typeorm:migration:run": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:run",
     "typeorm:migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:revert",
-    "typeorm:seed:create": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm migration:create",
     "typeorm:seed:run": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm seed:run",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
