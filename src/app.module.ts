@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { MovieModule } from './movie/movie.module';
 
 @Module({
   imports: [
@@ -17,9 +19,14 @@ import { AuthModule } from './auth/auth.module';
       database: 'MKSdatabase',
       username: 'postgres',
       password: process.env.DB_PASSWORD,
-
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+      // migrations: [__dirname + '/../migration/*.ts'],
+      // cli: {
+      //   migrationsDir: 'src/migration',
+      // },
     }),
-    AuthModule,
+    AuthModule, UserModule, MovieModule,
   ],
   controllers: [AppController],
   providers: [AppService],
