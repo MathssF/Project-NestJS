@@ -3,8 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { UserModule } from './user/user.module';
-// import { MovieModule } from './movie/movie.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -18,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
       port: 5432,
       database: 'MKSdatabase',
       username: 'postgres',
-      password: '123456',
+      password: process.env.DB_PASSWORD,
 
     }),
     AuthModule,
