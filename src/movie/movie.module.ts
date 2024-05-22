@@ -19,11 +19,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [MovieController],
   providers: [
     MovieService,
-    // UserRepository,
-    // GenreRepository,
-    // MovieRepository,
-    // MovieGenreRepository,
-    // RatingRepository,
   ],
 })
 export class MovieModule {}

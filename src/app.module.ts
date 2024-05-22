@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MovieModule } from './movie/movie.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -21,12 +22,8 @@ import { MovieModule } from './movie/movie.module';
       password: process.env.DB_PASSWORD,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      // migrations: [__dirname + '/../migration/*.ts'],
-      // cli: {
-      //   migrationsDir: 'src/migration',
-      // },
     }),
-    AuthModule, UserModule, MovieModule,
+    AuthModule, UserModule, MovieModule, SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
