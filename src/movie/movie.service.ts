@@ -98,6 +98,12 @@ export class MovieService {
   // Agora filtrar filmes por genero
 
   async findMoviesByGenreId(genreId: number): Promise<Movie[]> {
+    const cacheKey = `theGenre:${genreId}`;
+    const cachedMovies = await this.redisService.get(cacheKey);
+
+    if (cachedMovies) {
+        return JSON.parse(cachedMovies);
+    }
     const movieGenres = await this.movieGenreRepository.find({
         where: { genre: { id: genreId } }, relations: ['movie'],
     });
@@ -106,26 +112,35 @@ export class MovieService {
     if (movieIds.length === 0) {
       return [];
     }
-
-    return this.movieRepository.findByIds(movieIds);
+    const listMovies = this.movieRepository.findByIds(movieIds);
+    await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
+    return listMovies;
   }
 
   async findMoviesByGenreName(genreName: string): Promise<Movie[]> {
+    // const genre = await this.genreRepository.findOne({ where: { name: genreName } });
+    // if (!genre) {
+    //   return [];
+    // }
+    
+    // const movieGenres = await this.movieGenreRepository.find({
+    //   where: { genre: { id: genre.id } }, relations: ['movie']
+    // });
+    // const movieIds = movieGenres.map(movieGenre => movieGenre.movie.id);
+    
+    // if (movieIds.length === 0) {
+    //   return [];
+    // }
+
+    // return this.movieRepository.findByIds(movieIds);
     const genre = await this.genreRepository.findOne({ where: { name: genreName } });
+
     if (!genre) {
-      return [];
-    }
-    
-    const movieGenres = await this.movieGenreRepository.find({
-      where: { genre: { id: genre.id } }, relations: ['movie']
-    });
-    const movieIds = movieGenres.map(movieGenre => movieGenre.movie.id);
-    
-    if (movieIds.length === 0) {
-      return [];
+        return [];
     }
 
-    return this.movieRepository.findByIds(movieIds);
+    // Utilizar o ID do gênero para buscar os filmes
+    return this.findMoviesByGenreId(genre.id);
   }
 
   // Agora funções como votar, adicionar, remover e editar filmes:
