@@ -254,14 +254,17 @@ export class SeedService {
     for(const relation of relations){
       const exists = await this.movieGenreRepository.findOne({
         where: {   
-          movie_id: relation.movie_id,
-          genre_id: relation.genre_id,
+          movieId: relation.movie_id,
+          genreId: relation.genre_id,
         }
       });
       if (!exists) {
-        await this.movieGenreRepository.save(relation);
+        // await this.movieGenreRepository.save(relation as MovieInt);
+        const movieGenre = new MovieGenre();
+        movieGenre.movieId = relation.movie_id;
+        movieGenre.genreId = relation.genre_id;
+        await this.movieGenreRepository.save(movieGenre);
       }
-    //   await this.movieGenreRepository.save(relation);
     }
   }
 }
