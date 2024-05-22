@@ -99,7 +99,7 @@ export class MovieService {
 
   async vote(userId: number, movieId: number, voteValue: number): Promise<void> {
     // Verifica se o usuário existe
-    const user = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
