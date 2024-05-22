@@ -1,18 +1,20 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { UserRepository } from 'src/user/entities/user.repository';
 import { User } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    // @InjectRepository(UserRepository)
+    // private readonly userRepository: Repository<UserRepository>,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async createUser(username: string, email: string, password: string): Promise<User> {
