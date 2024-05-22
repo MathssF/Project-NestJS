@@ -10,11 +10,11 @@ export class MovieGenre {
   @PrimaryColumn()
   genreId: number;
 
-  @ManyToOne(() => Movie, (movie) => movie.genres, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'movie_id', referencedColumnName: 'id' })
+  @ManyToOne(() => Movie, (movie) => movie.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'movieId' })
   movie: Movie;
 
-  @ManyToOne(() => Genre, (genre) => genre.movies, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'genre_id', referencedColumnName: 'id' })
+  @ManyToOne(() => Genre, (genre) => genre.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'genreId' })
   genre: Genre;
 }
