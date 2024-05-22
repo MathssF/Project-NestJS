@@ -1,3 +1,4 @@
+import { createConnection } from 'typeorm';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateUsersTable implements MigrationInterface {
@@ -37,5 +38,20 @@ export class CreateUsersTable implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('users');
+  }
+}
+
+
+export async function runMigrationUT() {
+  try {
+    const connection = await createConnection();
+
+    await connection.runMigrations();
+
+    await connection.close();
+    
+    console.log('Migration executada com sucesso.');
+  } catch (error) {
+    console.error('Erro ao executar a migration:', error);
   }
 }

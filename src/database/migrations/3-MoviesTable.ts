@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, createConnection } from 'typeorm';
 
 export class CreateMovies implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -30,5 +30,20 @@ export class CreateMovies implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('movies');
+  }
+}
+
+
+export async function runMigrationMT() {
+  try {
+    const connection = await createConnection();
+
+    await connection.runMigrations();
+
+    await connection.close();
+    
+    console.log('Migration executada com sucesso.');
+  } catch (error) {
+    console.error('Erro ao executar a migration:', error);
   }
 }
