@@ -13,13 +13,9 @@ import { RedisService } from './redis.service';
     RedisModuleLib.forRootAsync({
       imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
-        //   config: {
-        //     host: process.env.REDIS_HOST,
-        //     port: parseInt(process.env.REDIS_PORT, 10),
-        //   },
         host: process.env.REDIS_HOST,
         port: parseInt(process.env.REDIS_PORT, 10),
-        }) as RedisModuleOptions,
+        }) as unknown as RedisModuleOptions,
         inject: [ConfigService],
       }),
     ],

@@ -56,6 +56,13 @@ export class MovieService {
   }
 
   async findMovieById(id: number): Promise<any> {
+    const cacheKey = `theMovie:${id}`;
+    const cachedMovie = await this.redisService.get(cacheKey);
+
+    if (cachedMovie) {
+      return JSON.parse(cachedMovie);
+    }
+
     const movie = this.movieRepository.findOne({
         where: {
             id: id,
@@ -70,6 +77,7 @@ export class MovieService {
     });
 
     if (ratings.length === 0) {
+      await this.redisService.set(cacheKey, JSON.stringify(movie), 3600);
       return movie;
     }
 
@@ -80,7 +88,11 @@ export class MovieService {
       : null;
 
     // Adicionar a média das avaliações ao objeto do filme
-    return { ...movie, rating: averageRating };
+    const movieWithRating = { ...movie, rating: averageRating };
+
+    await this.redisService.set(cacheKey, JSON.stringify(movieWithRating), 3600);
+
+    return movieWithRating;
   }
 
   // Agora filtrar filmes por genero
