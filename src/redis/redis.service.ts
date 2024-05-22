@@ -1,12 +1,12 @@
-// import { InjectRedis } from '@nestjs-modules/ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 // import { Redis, InjectRedis } from 'ioredis';
 
 @Injectable()
 export class RedisService {
-  constructos(
-    private readonly redis: Redis
+  constructor(
+    @InjectRedis() private readonly redis: Redis
   ) {}
 
   async get(key: string): Promise<string | null> {
