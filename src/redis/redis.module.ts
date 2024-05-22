@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RedisModule as RedisModuleLib } from '@nestjs-modules/ioredis';
+import { RedisModule as RedisModuleLib, RedisModuleOptions } from '@nestjs-modules/ioredis';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisService } from './redis.service';
 
@@ -8,7 +8,7 @@ import { RedisService } from './redis.service';
   imports: [
     RedisModuleLib.forRootAsync({
       imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
+        useFactory: async (configService: ConfigService) => ({
           config: {
             host: process.env.REDIS_HOST,
             port: parseInt(process.env.REDIS_PORT, 10),

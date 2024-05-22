@@ -6,6 +6,7 @@ import { GenreRepository } from './entities/genres.repository';
 import { MovieRepository } from './entities/movies.repository';
 import { MovieGenreRepository } from './entities/movie-genre.repository';
 import { RatingRepository } from 'src/user/entities/rating.repository';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class MovieService {
@@ -15,18 +16,43 @@ export class MovieService {
     private readonly movieRepository: MovieRepository,
     private readonly movieGenreRepository: MovieGenreRepository,
     private readonly ratingRepository: RatingRepository,
+    private readonly redisService: RedisService,
   ) {}
   async findGenres(): Promise<Genre[]> {
-    return this.genreRepository.find();
+    const cacheKey = 'genres';
+    const cachedGenres = await this.redisService.get(cacheKey);
+
+    if(cachedGenres) {
+      return JSON.parse(cachedGenres);
+    }
+    const listGenres = this.genreRepository.find();
+    await this.redisService.set(cacheKey, JSON.stringify(listGenres), 3600);
+    return listGenres;
   }
 
   async findGenresName(): Promise<string[]> {
+    const cacheKey = 'genreNames';
+    const cachedGenreNames = await this.redisService.get(cacheKey);
+
+    if (cachedGenreNames) {
+      return JSON.parse(cachedGenreNames);
+    }
     const genres = await this.genreRepository.find();
-    return genres.map(genre => genre.name);
+    const listNames = genres.map(genre => genre.name);
+    await this.redisService.set(cacheKey, JSON.stringify(listNames), 3600);
+    return listNames;
   }
  
   async findAllMovies(): Promise<Movie[]> {
-    return this.movieRepository.find();
+    const cacheKey = 'allMovies';
+    const cachedMovies = await this.redisService.get(cacheKey);
+
+    if (cachedMovies) {
+      return JSON.parse(cachedMovies);
+    }
+    const listMovies = this.movieRepository.find();
+    await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
+    return listMovies;
   }
 
   async findMovieById(id: number): Promise<any> {
