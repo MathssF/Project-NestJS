@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
 import { RedisService } from './redis/redis.service';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -24,9 +25,12 @@ import { RedisService } from './redis/redis.service';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    AuthModule, UserModule, MovieModule, SeedModule,
+    AuthModule, UserModule, MovieModule, SeedModule, RedisModule,
   ],
   controllers: [AppController],
-  providers: [AppService, RedisService],
+  providers: [
+    AppService,
+    RedisService,
+  ],
 })
 export class AppModule {}

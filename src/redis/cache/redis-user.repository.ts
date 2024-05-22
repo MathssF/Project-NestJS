@@ -4,4 +4,5 @@
 // @Injectable()
 // export class RedisUserRepository implements UserRepository {
 //   // Start
+//   async findMany(): Promise<User[]> {}
 // }

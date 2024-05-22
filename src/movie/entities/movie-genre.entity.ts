@@ -4,10 +4,10 @@ import { Genre } from './genres.entity';
 
 @Entity()
 export class MovieGenre {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int' })
   movieId: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int' })
   genreId: number;
 
   @ManyToOne(() => Movie, (movie) => movie.id, { onDelete: 'CASCADE' })
