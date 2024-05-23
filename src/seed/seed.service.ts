@@ -1,22 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { GenreRepository } from 'src/movie/entities/genres.repository';
-import { MovieGenreRepository } from 'src/movie/entities/movie-genre.repository';
-import { MovieRepository } from 'src/movie/entities/movies.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+// import { GenreRepository } from 'src/movie/entities/genres.repository';
+// import { MovieGenreRepository } from 'src/movie/entities/movie-genre.repository';
+// import { MovieRepository } from 'src/movie/entities/movies.repository';
+// import { RatingRepository } from 'src/user/entities/rating.repository';
+// import { UserRepository } from 'src/user/entities/user.repository';
+import { User } from 'src/user/entities/user.entity';
+import { Genre } from 'src/movie/entities/genres.entity';
+import { Movie } from 'src/movie/entities/movies.entity';
 import { MovieGenre } from 'src/movie/entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
-import { RatingRepository } from 'src/user/entities/rating.repository';
-import { UserRepository } from 'src/user/entities/user.repository';
 import * as bcrypt from 'bcryptjs';
 
 
 @Injectable()
 export class SeedService {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly genreRepository: GenreRepository,
-    private readonly movieRepository: MovieRepository,
-    private readonly movieGenreRepository: MovieGenreRepository,
-    private readonly ratingRepository: RatingRepository,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Genre)
+    private readonly genreRepository: Repository<Genre>,
+    @InjectRepository(Movie)
+    private readonly movieRepository: Repository<Movie>,
+    @InjectRepository(MovieGenre)
+    private readonly movieGenreRepository: Repository<MovieGenre>,
+    @InjectRepository(Rating)
+    private readonly ratingRepository: Repository<Rating>,
   ) {}
 
   async seed() {
