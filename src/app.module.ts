@@ -41,10 +41,14 @@ export class AppModule implements NestModule {
   configure() {
     const app = this.httpAdapterHost.httpAdapter.getInstance();
     const config = new DocumentBuilder()
-      .setTitle('Nome da sua API')
-      .setDescription('Descrição da sua API')
+      .setTitle('Movies Database')
+      .setDescription('Uma API que passa informação sobre uma lista de filmes usando o JWT')
       .setVersion('1.0')
-      .addTag('nome_da_tag')
+      .addTag('Movies')
+      .addTag('Database. postgres')
+      .addTag('NestJG')
+      .addTag('JWT')
+      .addTag('MKS')
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
