@@ -35,11 +35,6 @@ export class UserController {
     return user;
   }
 
-  // @Get('test-connection')
-  // async testDbConnection(): Promise<string> {
-  //   return this.userService.testConnection();
-  // }
-
   @Post('register')
   async register(@Body() registerDto: { username: string, email: string, password: string }) {
     return this.userService.createUser(registerDto.username, registerDto.email, registerDto.password);

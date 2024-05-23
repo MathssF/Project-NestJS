@@ -32,17 +32,5 @@ export class AuthController {
   //   return req.user;
   // }
 
-  @Post('register')
-  async register(@Body() registerDto: { username: string, email: string, password: string }) {
-    return this.authService.createUser(registerDto.username, registerDto.email, registerDto.password);
-  }
-  
-  // @Public()
-  @Post('login')
-  async login(@Body() loginDto: { username: string, password: string }) {
-    console.log('Passando pelo controller ');
-    return this.authService.login(loginDto.username, loginDto.password);
-  }
-
 
 }
