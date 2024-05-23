@@ -28,7 +28,7 @@ export class AppService {
 
   async testConnection2(): Promise<string> {
     try {
-      await this.userRepository.findAll()
+      await this.userRepository.find()
       return 'Database connection is working!';
     } catch (error) {
       console.error('Database connection failed:', error);
