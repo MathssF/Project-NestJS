@@ -4,7 +4,7 @@ import {
   NestModule,
   // RequestMethod,
 } from '@nestjs/common';
-// import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,6 +19,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     // ConfigModule.forRoot({
     //   isGlobal: true, // torna as configurações globais
     // }),

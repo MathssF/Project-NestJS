@@ -20,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:reset": "typeorm schema:drop"
+    "db:reset": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js schema:drop -d src/app.module.ts"
   },
   "dependencies": {
     "@nestjs-modules/ioredis": "^2.0.2",
