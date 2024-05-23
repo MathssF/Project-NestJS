@@ -6,11 +6,6 @@ import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
 import { MovieGenre } from './entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
-// import { UserRepository } from 'src/user/entities/user.repository';
-// import { GenreRepository } from './entities/genres.repository';
-// import { MovieRepository } from './entities/movies.repository';
-// import { MovieGenreRepository } from './entities/movie-genre.repository';
-// import { RatingRepository } from 'src/user/entities/rating.repository';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 

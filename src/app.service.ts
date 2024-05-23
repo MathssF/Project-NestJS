@@ -25,4 +25,14 @@ export class AppService {
       return 'Database connection failed!';
     }
   }
+
+  async testConnection2(): Promise<string> {
+    try {
+      await this.userRepository.findAll()
+      return 'Database connection is working!';
+    } catch (error) {
+      console.error('Database connection failed:', error);
+      return 'Database connection failed!';
+    }
+  }
 }

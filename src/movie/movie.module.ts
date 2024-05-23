@@ -1,20 +1,16 @@
 import { Module } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { MovieController } from './movie.controller';
-import { UserRepository } from 'src/user/entities/user.repository';
-import { GenreRepository } from './entities/genres.repository';
-import { MovieRepository } from './entities/movies.repository';
-import { MovieGenreRepository } from './entities/movie-genre.repository';
-import { RatingRepository } from 'src/user/entities/rating.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Genre } from './entities/genres.entity';
+import { Movie } from './entities/movies.entity';
+import { MovieGenre } from './entities/movie-genre.entity';
+import { Rating } from 'src/user/entities/rating.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
-    UserRepository,
-    GenreRepository,
-    MovieRepository,
-    MovieGenreRepository,
-    RatingRepository,
+    User, Genre, Movie, MovieGenre, Rating,
   ])],
   controllers: [MovieController],
   providers: [
