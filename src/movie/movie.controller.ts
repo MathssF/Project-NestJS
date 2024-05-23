@@ -10,6 +10,14 @@ interface MovieR extends Movie {
   rating?: number; // Adicionando rating como opcional
 }
 
+interface CreateMoviePost {
+  id?: number;
+  name: string;
+  description: string;
+  release_date: string;
+  genres: number[];
+}
+
 @Controller('movie')
 @UseGuards(JwtAuthGuard)
 export class MovieController {
@@ -58,10 +66,10 @@ export class MovieController {
     await this.movieService.vote(userId, movieId, rating);
   }
 
-  // @Post()
-  // async create(@Body() movieData: Partial<Movie>): Promise<Movie> {
-  //   return await this.movieService.create(movieData);
-  // }
+  @Post()
+  async create(@Body() movieData: CreateMoviePost): Promise<Movie> {
+    return await this.movieService.create(movieData);
+  }
 
   @Put(':id')
   async edit(@Param('id') id: number, @Body() movieData: Partial<Movie>): Promise<Movie> {
