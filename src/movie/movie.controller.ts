@@ -1,9 +1,7 @@
 import {
-  Controller, Get, Post,
-  Body, Param, Delete,
-  UseGuards, ParseIntPipe,
-  Put, NotFoundException,
-  Request,
+  Controller, Get, Post, Body, Param,
+  Delete, UseGuards, ParseIntPipe, Put,
+  NotFoundException, UnauthorizedException,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
@@ -19,7 +17,10 @@ interface MovieR extends Movie {
 @Controller('movie')
 @UseGuards(JwtAuthGuard)
 export class MovieController {
-  constructor(private readonly movieService: MovieService) {}
+  constructor(
+    private readonly movieService: MovieService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('genres')
   async findAllGenres(): Promise<Genre[]> {
@@ -58,11 +59,14 @@ export class MovieController {
   @Post('vote/:id')
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
-    // @Body('userId', ParseIntPipe) userId: number,
-    @Request() request: Request,
+    @Body('token') token: string,
     @Body('rating', ParseIntPipe) rating: number,
   ): Promise<void> {
-    const userId = request.user.id;
+    const userId = await this.authService.getUserIdFromToken(token);
+    if (userId === null) {
+      // Lida com o caso em que o userId não pôde ser extraído do token
+      throw new UnauthorizedException('Token inválido');
+    }
     await this.movieService.vote(userId, movieId, rating);
   }
 
