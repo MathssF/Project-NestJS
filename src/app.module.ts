@@ -1,8 +1,6 @@
 import {
-  // MiddlewareConsumer, 
   Module,
   NestModule,
-  // RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -14,15 +12,13 @@ import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpAdapterHost } from '@nestjs/core';
-// import { CacheModule } from '@nestjs/cache-manager';
-// import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    // ConfigModule.forRoot({
-    //   isGlobal: true, // torna as configurações globais
-    // }),
+    // ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true, // torna as configurações globais
+    }),
     // CacheModule.registerAsync({
     //   useFactory: async () => ({
     //     store: redisStore as any, // Forçando o tipo para resolver o erro
