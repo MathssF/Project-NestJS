@@ -9,7 +9,7 @@ import { MovieGenre } from './entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -22,7 +22,7 @@ import { JwtAuthGuard } from 'src/auth/auth.guard';
     MovieService,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard
+      useClass: AuthGuard
     }
   ],
 })

@@ -11,11 +11,13 @@ export class AuthService {
 
   async signIn(
     username: string,
-    pass: string,
+    password: string,
   ): Promise<{ access_token: string }> {
+    console.log('Entrou no User');
     const user = await this.userService.getUserByName(username);
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+    console.log('User:...  ', user);
+    if (user?.password !== password) {
+      throw new UnauthorizedException('Erro na validação do signIn');
     }
     const payload = { sub: user.id, username: user.username };
     return {
