@@ -9,7 +9,10 @@ import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    // private readonly dataSource: DataSource,
+  ) {}
 
   @Get('userid/:id')
   async getUserByID(@Param('id') id: string): Promise<User> {
@@ -29,4 +32,9 @@ export class UserController {
     }
     return user;
   }
+
+  // @Get('test-connection')
+  // async testDbConnection(): Promise<string> {
+  //   return this.userService.testConnection();
+  // }
 }

@@ -12,6 +12,11 @@ import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpAdapterHost } from '@nestjs/core';
+import { User } from './user/entities/user.entity';
+import { Genre } from './movie/entities/genres.entity';
+import { Movie } from './movie/entities/movies.entity';
+import { MovieGenre } from './movie/entities/movie-genre.entity';
+import { Rating } from './user/entities/rating.entity';
 
 @Module({
   imports: [
@@ -25,7 +30,7 @@ import { HttpAdapterHost } from '@nestjs/core';
       database: 'MKSdatabase',
       username: 'postgres',
       password: process.env.DB_PASSWORD,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [User, Genre, Movie, MovieGenre, Rating],
       synchronize: true,
     }),
     AuthModule, UserModule, MovieModule, SeedModule,
