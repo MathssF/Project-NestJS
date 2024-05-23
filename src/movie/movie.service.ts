@@ -25,49 +25,49 @@ export class MovieService {
     private readonly ratingRepository: RatingRepository,
   ) {}
   async findGenres(): Promise<Genre[]> {
-    const cacheKey = 'genres';
-    const cachedGenres = await this.redisService.get(cacheKey);
+    // const cacheKey = 'genres';
+    // const cachedGenres = await this.redisService.get(cacheKey);
 
-    if(cachedGenres) {
-      return JSON.parse(cachedGenres);
-    }
+    // if(cachedGenres) {
+    //   return JSON.parse(cachedGenres);
+    // }
     const listGenres = this.genreRepository.find();
-    await this.redisService.set(cacheKey, JSON.stringify(listGenres), 3600);
+    // await this.redisService.set(cacheKey, JSON.stringify(listGenres), 3600);
     return listGenres;
   }
 
   async findGenresName(): Promise<string[]> {
-    const cacheKey = 'genreNames';
-    const cachedGenreNames = await this.redisService.get(cacheKey);
+    // const cacheKey = 'genreNames';
+    // const cachedGenreNames = await this.redisService.get(cacheKey);
 
-    if (cachedGenreNames) {
-      return JSON.parse(cachedGenreNames);
-    }
+    // if (cachedGenreNames) {
+    //   return JSON.parse(cachedGenreNames);
+    // }
     const genres = await this.genreRepository.find();
     const listNames = genres.map(genre => genre.name);
-    await this.redisService.set(cacheKey, JSON.stringify(listNames), 3600);
+    // await this.redisService.set(cacheKey, JSON.stringify(listNames), 3600);
     return listNames;
   }
  
   async findAllMovies(): Promise<Movie[]> {
-    const cacheKey = 'allMovies';
-    const cachedMovies = await this.redisService.get(cacheKey);
+    // const cacheKey = 'allMovies';
+    // const cachedMovies = await this.redisService.get(cacheKey);
 
-    if (cachedMovies) {
-      return JSON.parse(cachedMovies);
-    }
+    // if (cachedMovies) {
+    //   return JSON.parse(cachedMovies);
+    // }
     const listMovies = this.movieRepository.find();
-    await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
+    // await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
     return listMovies;
   }
 
   async findMovieById(id: number): Promise<any> {
-    const cacheKey = `theMovie:${id}`;
-    const cachedMovie = await this.redisService.get(cacheKey);
+    // const cacheKey = `theMovie:${id}`;
+    // const cachedMovie = await this.redisService.get(cacheKey);
 
-    if (cachedMovie) {
-      return JSON.parse(cachedMovie);
-    }
+    // if (cachedMovie) {
+    //   return JSON.parse(cachedMovie);
+    // }
 
     const movie = this.movieRepository.findOne({
         where: {
@@ -83,7 +83,7 @@ export class MovieService {
     });
 
     if (ratings.length === 0) {
-      await this.redisService.set(cacheKey, JSON.stringify(movie), 3600);
+      // await this.redisService.set(cacheKey, JSON.stringify(movie), 3600);
       return movie;
     }
 
@@ -96,7 +96,7 @@ export class MovieService {
     // Adicionar a média das avaliações ao objeto do filme
     const movieWithRating = { ...movie, rating: averageRating };
 
-    await this.redisService.set(cacheKey, JSON.stringify(movieWithRating), 3600);
+    // await this.redisService.set(cacheKey, JSON.stringify(movieWithRating), 3600);
 
     return movieWithRating;
   }
@@ -104,12 +104,12 @@ export class MovieService {
   // Agora filtrar filmes por genero
 
   async findMoviesByGenreId(genreId: number): Promise<Movie[]> {
-    const cacheKey = `theGenre:${genreId}`;
-    const cachedMovies = await this.redisService.get(cacheKey);
+    // const cacheKey = `theGenre:${genreId}`;
+    // const cachedMovies = await this.redisService.get(cacheKey);
 
-    if (cachedMovies) {
-        return JSON.parse(cachedMovies);
-    }
+    // if (cachedMovies) {
+    //     return JSON.parse(cachedMovies);
+    // }
     const movieGenres = await this.movieGenreRepository.find({
         where: { genre: { id: genreId } }, relations: ['movie'],
     });
@@ -119,7 +119,7 @@ export class MovieService {
       return [];
     }
     const listMovies = this.movieRepository.findByIds(movieIds);
-    await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
+    // await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
     return listMovies;
   }
 
@@ -202,13 +202,13 @@ export class MovieService {
       }
     }
   
-    // Limpa cache do Redis
-    await this.redisService.del('allMovies');
-    if (movieData.genres) {
-      for (const genreId of movieData.genres) {
-        await this.redisService.del(`theGenre:${genreId}`);
-      }
-    }
+    // // Limpa cache do Redis
+    // await this.redisService.del('allMovies');
+    // if (movieData.genres) {
+    //   for (const genreId of movieData.genres) {
+    //     await this.redisService.del(`theGenre:${genreId}`);
+    //   }
+    // }
   
     return savedMovie;
   }
@@ -295,13 +295,13 @@ export class MovieService {
     await this.movieRepository.remove(movie);
 
     // Limpa o cache de allMovies
-    await this.redisService.del('allMovies');
+    // await this.redisService.del('allMovies');
 
-    // Limpa o cache relacionado ao gênero do filme
-    const genres = movie.genres.map(genre => genre.id);
-    for (const genreId of genres) {
-      await this.redisService.del(`theGenre:${genreId}`);
-    }
+    // // Limpa o cache relacionado ao gênero do filme
+    // const genres = movie.genres.map(genre => genre.id);
+    // for (const genreId of genres) {
+    //   await this.redisService.del(`theGenre:${genreId}`);
+    // }
     return { success: true };
   }
 }

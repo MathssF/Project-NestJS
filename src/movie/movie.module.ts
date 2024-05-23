@@ -18,8 +18,7 @@ import { AuthService } from 'src/auth/auth.service';
     MovieGenreRepository,
     RatingRepository,
     AuthModule,
-  ]), // RedisModule,
-  ],
+  ])],
   controllers: [MovieController],
   providers: [
     MovieService,

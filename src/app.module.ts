@@ -9,22 +9,21 @@ import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpAdapterHost } from '@nestjs/core';
-import { CacheModule } from '@nestjs/cache-manager';
-import type { RedisClientOptions } from 'redis';
-import { redisStore } from 'cache-manager-redis-store';
+// import { CacheModule } from '@nestjs/cache-manager';
+// import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true, // torna as configurações globais
-    }),
-    CacheModule.registerAsync({
-      useFactory: async () => ({
-        store: redisStore as any, // Forçando o tipo para resolver o erro
-        host: 'localhost',
-        port: 6379,
-      }),
-    }),
+    // ConfigModule.forRoot({
+    //   isGlobal: true, // torna as configurações globais
+    // }),
+    // CacheModule.registerAsync({
+    //   useFactory: async () => ({
+    //     store: redisStore as any, // Forçando o tipo para resolver o erro
+    //     host: 'localhost',
+    //     port: 6379,
+    //   }),
+    // }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
