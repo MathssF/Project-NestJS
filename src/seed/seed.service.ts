@@ -65,6 +65,7 @@ export class SeedService {
   }
 
   private async SeedGenre() {
+    console.log('ENTROU NO SEED DE GENRES');
     const genres = [
         { id: 28, name: 'Action' },
         { id: 12, name: 'Adventure' },
@@ -92,6 +93,7 @@ export class SeedService {
   }
 
   private async SeedMovie() {
+    console.log('ENTROU NO SEED DE MOVIES');
     const movies = [
         {
             id: 823464,
@@ -204,6 +206,7 @@ export class SeedService {
   }
 
   private async SeedRelations() {
+    console.log('ENTROU NO SEED DE MOVIES IN GENRES!!!!!!!');
     const relations = [
         { movie_id: 823464, genre_id: 878 },
         { movie_id: 823464, genre_id: 28 },
@@ -254,18 +257,7 @@ export class SeedService {
         { movie_id: 119450, genre_id: 53},
         { movie_id: 1064178, genre_id: 28},
         { movie_id: 1064178, genre_id: 53},
-        { movie_id: 1064178, genre_id: 27},
-        { movie_id: 1147400, genre_id: 16},
-        { movie_id: 1147400, genre_id: 12},
-        { movie_id: 1147400, genre_id: 28},
-        { movie_id: 1147400, genre_id: 14},
-        { movie_id: 1147400, genre_id: 10751},
-        { movie_id: 838209, genre_id: 9648},
-        { movie_id: 838209, genre_id: 27},
-        { movie_id: 838209, genre_id: 53},
-        { movie_id: 934632, genre_id: 878},
-        { movie_id: 934632, genre_id: 28},
-        { movie_id: 934632, genre_id: 18}
+        { movie_id: 1064178, genre_id: 27}
     ];
 
     for(const relation of relations){

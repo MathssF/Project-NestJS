@@ -10,13 +10,13 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('test-db')
-  async testDbConnection(): Promise<string> {
-    return await this.appService.testConnection();
+  @Get('test-db1')
+  async testDbConnection1(): Promise<string> {
+    return await this.appService.testConnection1();
   }
 
   @Get('test-db2')
   async testDbConnection2(): Promise<string> {
-    return await this.appService.testConnection();
+    return await this.appService.testConnection2();
   }
 }

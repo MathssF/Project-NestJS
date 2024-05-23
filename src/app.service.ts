@@ -14,12 +14,17 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async testConnection(): Promise<string> {
+  async testConnection1(): Promise<string> {
     try {
-      await this.userRepository.findOne({
+      const user = await this.userRepository.findOne({
         where: { id: 1 }
       });
-      return 'Database connection is working!';
+      if (user) {
+        return `User name:`// ${user.name}`; // Retorna o nome do usuário
+      } else {
+        return 'User not found';
+      }
+  
     } catch (error) {
       console.error('Database connection failed:', error);
       return 'Database connection failed!';
@@ -28,8 +33,9 @@ export class AppService {
 
   async testConnection2(): Promise<string> {
     try {
-      await this.userRepository.find()
-      return 'Database connection is working!';
+      const users = await this.userRepository.find();
+      const userCount = users.length;
+      return `${userCount} users`;
     } catch (error) {
       console.error('Database connection failed:', error);
       return 'Database connection failed!';
