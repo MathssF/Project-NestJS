@@ -7,27 +7,29 @@ import { MovieRepository } from './entities/movies.repository';
 import { MovieGenreRepository } from './entities/movie-genre.repository';
 import { RatingRepository } from 'src/user/entities/rating.repository';
 import { RedisService } from 'src/redis/redis.service';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { EditMoviePost } from './dto/update-movie.dto';
 
 interface MovieR extends Movie {
   rating?: number; // Adicionando rating como opcional
 }
 
-interface CreateMoviePost {
-  id?: number,
-  name: string;
-  description: string;
-  release_date: string;
-  genres: number[];
-}
+// interface CreateMoviePost {
+//   id?: number,
+//   name: string;
+//   description: string;
+//   release_date: string;
+//   genres: number[];
+// }
 
-interface EditMoviePost {
-  name?: string;
-  description?: string;
-  release_date?: string;
-  listGenres?: number[];
-  addGenres?: number[];
-  delGenres?: number[];
-}
+// interface EditMoviePost {
+//   name?: string;
+//   description?: string;
+//   release_date?: string;
+//   listGenres?: number[];
+//   addGenres?: number[];
+//   delGenres?: number[];
+// }
 
 
 @Injectable()
@@ -178,7 +180,7 @@ export class MovieService {
     await this.ratingRepository.save(rating);
   }
 
-  async create(movieData: CreateMoviePost): Promise<Movie> {
+  async create(movieData: CreateMovieDto): Promise<Movie> {
     // Verifica se o ID fornecido já existe
     if (movieData.id) {
       const existingMovie = await this.movieRepository.findOne({

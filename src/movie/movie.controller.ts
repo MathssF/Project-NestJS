@@ -10,13 +10,13 @@ interface MovieR extends Movie {
   rating?: number; // Adicionando rating como opcional
 }
 
-interface CreateMoviePost {
-  id?: number;
-  name: string;
-  description: string;
-  release_date: string;
-  genres: number[];
-}
+// interface CreateMoviePost {
+//   id?: number;
+//   name: string;
+//   description: string;
+//   release_date: string;
+//   genres: number[];
+// }
 
 @Controller('movie')
 @UseGuards(JwtAuthGuard)
