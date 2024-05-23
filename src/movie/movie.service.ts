@@ -8,6 +8,18 @@ import { MovieGenreRepository } from './entities/movie-genre.repository';
 import { RatingRepository } from 'src/user/entities/rating.repository';
 import { RedisService } from 'src/redis/redis.service';
 
+interface MovieR extends Movie {
+  rating?: number; // Adicionando rating como opcional
+}
+
+interface CreateMoviePost {
+  id?: number,
+  name: string;
+  description: string;
+  release_date: string;
+  genres: number[];
+}
+
 @Injectable()
 export class MovieService {
   constructor(
@@ -118,28 +130,10 @@ export class MovieService {
   }
 
   async findMoviesByGenreName(genreName: string): Promise<Movie[]> {
-    // const genre = await this.genreRepository.findOne({ where: { name: genreName } });
-    // if (!genre) {
-    //   return [];
-    // }
-    
-    // const movieGenres = await this.movieGenreRepository.find({
-    //   where: { genre: { id: genre.id } }, relations: ['movie']
-    // });
-    // const movieIds = movieGenres.map(movieGenre => movieGenre.movie.id);
-    
-    // if (movieIds.length === 0) {
-    //   return [];
-    // }
-
-    // return this.movieRepository.findByIds(movieIds);
     const genre = await this.genreRepository.findOne({ where: { name: genreName } });
-
     if (!genre) {
         return [];
-    }
-
-    // Utilizar o ID do gênero para buscar os filmes
+    } // Utilizar o ID do gênero para buscar os filmes
     return this.findMoviesByGenreId(genre.id);
   }
 
@@ -150,14 +144,10 @@ export class MovieService {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
-    }
-
-    // Verifica se o usuário tem permissão para votar
+    } // Verifica se o usuário tem permissão para votar
     if (!user.authority.vote) {
       throw new ForbiddenException('User does not have permission to vote');
-    }
-    
-    // Verifica o se o valor que ele votou esta dentro de 1 e 5 e é um inteiro:
+    } // Verifica o se o valor que ele votou esta dentro de 1 e 5 e é um inteiro:
     if (!Number.isInteger(voteValue) || voteValue < 1 || voteValue > 5) {
         throw new ForbiddenException('You need chosse a value between 1 and 5')
     }
@@ -178,9 +168,24 @@ export class MovieService {
     await this.ratingRepository.save(rating);
   }
 
-  async create(movieData: Partial<Movie>): Promise<Movie> {
-    const movie = this.movieRepository.create(movieData);
-    return await this.movieRepository.save(movie);
+  // async create(movieData: Partial<Movie>): Promise<Movie> {
+  async create(movieData: CreateMoviePost): Promise<Movie> {
+    if (movieData.id) {
+      const movieWithId = {
+        id: movieData.id,
+        name: movieData.name,
+        description: movieData.description,
+        release_date: movieData.release_date,
+      }
+      const movie = this.movieRepository.create(movieWithId);
+      for(const elem of movieData.genres) {
+        const genres = this.movieGenreRepository.create({
+          movie_id: movieData.id,
+          genre_id: elem,
+        })
+      }
+    }
+    // return await this.movieRepository.save(movie);
   }
 
   async edit(id: number, movieData: Partial<Movie>): Promise<Movie> {

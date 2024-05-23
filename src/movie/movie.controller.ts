@@ -58,10 +58,10 @@ export class MovieController {
     await this.movieService.vote(userId, movieId, rating);
   }
 
-  @Post()
-  async create(@Body() movieData: Partial<Movie>): Promise<Movie> {
-    return await this.movieService.create(movieData);
-  }
+  // @Post()
+  // async create(@Body() movieData: Partial<Movie>): Promise<Movie> {
+  //   return await this.movieService.create(movieData);
+  // }
 
   @Put(':id')
   async edit(@Param('id') id: number, @Body() movieData: Partial<Movie>): Promise<Movie> {
