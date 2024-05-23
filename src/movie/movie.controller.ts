@@ -1,4 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards, ParseIntPipe, Put, NotFoundException } from '@nestjs/common';
+import {
+  Controller, Get, Post,
+  Body, Param, Delete,
+  UseGuards, ParseIntPipe,
+  Put, NotFoundException,
+  Request,
+} from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
@@ -52,9 +58,11 @@ export class MovieController {
   @Post('vote/:id')
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
-    @Body('userId', ParseIntPipe) userId: number,
+    // @Body('userId', ParseIntPipe) userId: number,
+    @Request() request: Request,
     @Body('rating', ParseIntPipe) rating: number,
   ): Promise<void> {
+    const userId = request.user.id;
     await this.movieService.vote(userId, movieId, rating);
   }
 
