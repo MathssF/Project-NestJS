@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Put, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, ParseIntPipe, Put, NotFoundException } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
@@ -7,16 +7,8 @@ import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
 
 interface MovieR extends Movie {
-  rating?: number; // Adicionando rating como opcional
+  rating?: number;
 }
-
-// interface CreateMoviePost {
-//   id?: number;
-//   name: string;
-//   description: string;
-//   release_date: string;
-//   genres: number[];
-// }
 
 @Controller('movie')
 @UseGuards(JwtAuthGuard)
@@ -87,12 +79,12 @@ export class MovieController {
   }
 
 
-  // @Delete(':id')
-  // async delete(@Param('id') id: number): Promise<{ success: boolean }> {
-  //   const result = await this.movieService.delete(id);
-  //   if (!result.success) {
-  //     throw new NotFoundException('Movie not found');
-  //   }
-  //   return result;
-  // }
+  @Delete(':id')
+  async delete(@Param('id') id: number): Promise<{ success: boolean }> {
+    const result = await this.movieService.delete(id);
+    if (!result.success) {
+      throw new NotFoundException('Movie not found');
+    }
+    return result;
+  }
 }

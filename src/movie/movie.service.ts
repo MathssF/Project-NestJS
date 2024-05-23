@@ -11,25 +11,8 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 
 interface MovieR extends Movie {
-  rating?: number; // Adicionando rating como opcional
+  rating?: number;
 }
-
-// interface CreateMoviePost {
-//   id?: number,
-//   name: string;
-//   description: string;
-//   release_date: string;
-//   genres: number[];
-// }
-
-// interface EditMoviePost {
-//   name?: string;
-//   description?: string;
-//   release_date?: string;
-//   listGenres?: number[];
-//   addGenres?: number[];
-//   delGenres?: number[];
-// }
 
 
 @Injectable()
@@ -311,6 +294,15 @@ export class MovieService {
       throw new NotFoundException('Movie not found');
     }
     await this.movieRepository.remove(movie);
+
+    // Limpa o cache de allMovies
+    await this.redisService.del('allMovies');
+
+    // Limpa o cache relacionado ao gênero do filme
+    const genres = movie.genres.map(genre => genre.id);
+    for (const genreId of genres) {
+      await this.redisService.del(`theGenre:${genreId}`);
+    }
     return { success: true };
   }
 }
