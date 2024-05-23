@@ -21,28 +21,28 @@ export class AuthController {
   ) {}
 
   // @HttpCode(HttpStatus.OK)
-  @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.login(signInDto.username, signInDto.password);
-  }
+  // @Post('login')
+  // signIn(@Body() signInDto: Record<string, any>) {
+  //   return this.authService.login(signInDto.username, signInDto.password);
+  // }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('profile')
+  // getProfile(@Request() req) {
+  //   return req.user;
+  // }
 
   @Post('register')
   async register(@Body() registerDto: { username: string, email: string, password: string }) {
     return this.authService.createUser(registerDto.username, registerDto.email, registerDto.password);
   }
   
-  // // @Public()
-  // @Post('login')
-  // async login(@Body() loginDto: { username: string, password: string }) {
-  //   console.log('Passando pelo controller ');
-  //   return this.authService.login(loginDto.username, loginDto.password);
-  // }
+  // @Public()
+  @Post('login')
+  async login(@Body() loginDto: { username: string, password: string }) {
+    console.log('Passando pelo controller ');
+    return this.authService.login(loginDto.username, loginDto.password);
+  }
 
 
 }

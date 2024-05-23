@@ -53,16 +53,26 @@ export class AuthService {
   }
   
 
-  async login(username: string, password: string): Promise<{ access_token: string }> {
-    console.log('Passou aqui pelo Auth Service');
-    const user = await this.userService.getUserByName(username);
-    if (user && await user.validatePassword(password)) {
-      console.log('Entrou no if de User e Pass');
-      const payload = { sub: user.id, username: user.username };
-      const access_token = await this.jwtService.signAsync(payload);
-      return { access_token };
-    }
-    throw new UnauthorizedException('Invalid credentials, Login e Senha');
+  // async login(username: string, password: string): Promise<{ access_token: string }> {
+  //   console.log('Passou aqui pelo Auth Service');
+  //   const user = await this.userService.getUserByName(username);
+  //   if (user && await user.validatePassword(password)) {
+  //     console.log('Entrou no if de User e Pass');
+  //     const payload = { sub: user.id, username: user.username };
+  //     const access_token = await this.jwtService.signAsync(payload);
+  //     return { access_token };
+  //   }
+  //   throw new UnauthorizedException('Invalid credentials, Login e Senha');
+  // }
+
+  async login(username: string, password: string): Promise<string> {
+    const wasUser = await this.validateUser(username, password);
+    const load = {user: username, sub: wasUser.id};
+    // const expiresIn = '24h'; //process.env.JWT_EXPIRES_IN;
+    // const accessToken = await this.jwtService.signAsync(load, { expiresIn });
+    const accessToken = await this.jwtService.signAsync(load);
+    console.log('O erro pode estar no auth.service ');
+    return accessToken;
   }
   
 
