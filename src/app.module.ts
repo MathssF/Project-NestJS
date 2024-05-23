@@ -7,15 +7,23 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
-import { RedisService } from './redis/redis.service';
-import { RedisModule } from './redis/redis.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpAdapterHost } from '@nestjs/core';
+import { CacheModule } from '@nestjs/cache-manager';
+import type { RedisClientOptions } from 'redis';
+import { redisStore } from 'cache-manager-redis-store';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // torna as configurações globais
+    }),
+    CacheModule.registerAsync({
+      useFactory: async () => ({
+        store: redisStore as any, // Forçando o tipo para resolver o erro
+        host: 'localhost',
+        port: 6379,
+      }),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -27,12 +35,11 @@ import { HttpAdapterHost } from '@nestjs/core';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    AuthModule, UserModule, MovieModule, SeedModule, RedisModule,
+    AuthModule, UserModule, MovieModule, SeedModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    RedisService,
   ],
 })
 export class AppModule implements NestModule {

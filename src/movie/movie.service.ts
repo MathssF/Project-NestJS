@@ -6,7 +6,7 @@ import { GenreRepository } from './entities/genres.repository';
 import { MovieRepository } from './entities/movies.repository';
 import { MovieGenreRepository } from './entities/movie-genre.repository';
 import { RatingRepository } from 'src/user/entities/rating.repository';
-import { RedisService } from 'src/redis/redis.service';
+// import { RedisModule } from 'src/redis/redis.module';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 
@@ -23,7 +23,6 @@ export class MovieService {
     private readonly movieRepository: MovieRepository,
     private readonly movieGenreRepository: MovieGenreRepository,
     private readonly ratingRepository: RatingRepository,
-    private readonly redisService: RedisService,
   ) {}
   async findGenres(): Promise<Genre[]> {
     const cacheKey = 'genres';

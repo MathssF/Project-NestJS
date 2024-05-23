@@ -7,6 +7,8 @@ import { MovieRepository } from './entities/movies.repository';
 import { MovieGenreRepository } from './entities/movie-genre.repository';
 import { RatingRepository } from 'src/user/entities/rating.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from 'src/auth/auth.module';
+import { AuthService } from 'src/auth/auth.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -15,10 +17,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     MovieRepository,
     MovieGenreRepository,
     RatingRepository,
-  ])],
+    AuthModule,
+  ]), // RedisModule,
+  ],
   controllers: [MovieController],
   providers: [
     MovieService,
+    AuthService,
   ],
 })
 export class MovieModule {}
