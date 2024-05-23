@@ -1,11 +1,16 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
-import { UserRepository } from 'src/user/entities/user.repository';
-import { GenreRepository } from './entities/genres.repository';
-import { MovieRepository } from './entities/movies.repository';
-import { MovieGenreRepository } from './entities/movie-genre.repository';
-import { RatingRepository } from 'src/user/entities/rating.repository';
+import { MovieGenre } from './entities/movie-genre.entity';
+import { Rating } from 'src/user/entities/rating.entity';
+// import { UserRepository } from 'src/user/entities/user.repository';
+// import { GenreRepository } from './entities/genres.repository';
+// import { MovieRepository } from './entities/movies.repository';
+// import { MovieGenreRepository } from './entities/movie-genre.repository';
+// import { RatingRepository } from 'src/user/entities/rating.repository';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 
@@ -17,11 +22,16 @@ interface MovieR extends Movie {
 @Injectable()
 export class MovieService {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly genreRepository: GenreRepository,
-    private readonly movieRepository: MovieRepository,
-    private readonly movieGenreRepository: MovieGenreRepository,
-    private readonly ratingRepository: RatingRepository,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Genre)
+    private readonly genreRepository: Repository<Genre>,
+    @InjectRepository(Movie)
+    private readonly movieRepository: Repository<Movie>,
+    @InjectRepository(MovieGenre)
+    private readonly movieGenreRepository: Repository<MovieGenre>,
+    @InjectRepository(Rating)
+    private readonly ratingRepository: Repository<Rating>,
   ) {}
   async findGenres(): Promise<Genre[]> {
     const listGenres = this.genreRepository.find();

@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-// import { GenreRepository } from 'src/movie/entities/genres.repository';
-// import { MovieGenreRepository } from 'src/movie/entities/movie-genre.repository';
-// import { MovieRepository } from 'src/movie/entities/movies.repository';
-// import { RatingRepository } from 'src/user/entities/rating.repository';
-// import { UserRepository } from 'src/user/entities/user.repository';
 import { User } from 'src/user/entities/user.entity';
 import { Genre } from 'src/movie/entities/genres.entity';
 import { Movie } from 'src/movie/entities/movies.entity';
