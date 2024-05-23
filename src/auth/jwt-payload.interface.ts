@@ -4,3 +4,12 @@ export interface JwtPayload {
     password: string;
   }
   
+export interface JwtUser {
+  id: number;
+}
+
+declare namespace Express {
+  interface Request {
+    user?: JwtUser;
+  }
+}

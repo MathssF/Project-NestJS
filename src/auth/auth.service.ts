@@ -53,4 +53,17 @@ export class AuthService {
       }
     }
   }
+
+  async getUserIdFromToken(token: string): Promise<number | null> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      if (decodedToken && typeof decodedToken === 'object' && 'sub' in decodedToken) {
+        return decodedToken.sub; // 'sub' é uma convenção JWT para o user id
+      }
+      return null; // Retorne null se não conseguir extrair o user id do token
+    } catch (error) {
+      console.error('Erro ao verificar o token:', error.message);
+      return null; // Retorne null se houver um erro ao verificar o token
+    }
+  }
 }
