@@ -35,9 +35,11 @@ import { HttpAdapterHost } from '@nestjs/core';
     RedisService,
   ],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    const app = consumer.getHttpAdapter().getInstance();
+export class AppModule implements NestModule {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+
+  configure() {
+    const app = this.httpAdapterHost.httpAdapter.getInstance();
     const config = new DocumentBuilder()
       .setTitle('Nome da sua API')
       .setDescription('Descrição da sua API')
