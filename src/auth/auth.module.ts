@@ -4,13 +4,14 @@ import { AuthController } from './auth.controller';
 import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { jwtConstants } from './contants';
 
 @Module({
   imports: [
     UserModule,
     JwtModule.register({
       global: true,
-      secret: 'MeContrata',
+      secret: jwtConstants.secret,
       signOptions: { expiresIn: '24h' },
     }),
   ],

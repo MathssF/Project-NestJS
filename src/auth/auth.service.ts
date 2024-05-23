@@ -1,7 +1,6 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-// import { UserRepository } from 'src/user/entities/user.repository';
 import { User } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,13 +8,10 @@ import { Repository } from 'typeorm';
 
 function removeBearerPrefix(tokenWithBearer: string): string {
   console.log('Entrou na funçã de remover o Bearer');
-  // Verifica se o token começa com "Bearer "
   if (tokenWithBearer.startsWith("Bearer ")) {
-      // Remove "Bearer " e retorna o restante do token
       console.log('Removeu!');
       return tokenWithBearer.slice(7);
   } else {
-      // Se não começar com "Bearer ", apenas retorna o token original
       console.log('Não precisou remover pois não tinha!');
       return tokenWithBearer;
   }
@@ -51,28 +47,13 @@ export class AuthService {
     }
     throw new UnauthorizedException('Invalid credentials');
   }
-  
 
-  // async login(username: string, password: string): Promise<{ access_token: string }> {
-  //   console.log('Passou aqui pelo Auth Service');
-  //   const user = await this.userService.getUserByName(username);
-  //   if (user && await user.validatePassword(password)) {
-  //     console.log('Entrou no if de User e Pass');
-  //     const payload = { sub: user.id, username: user.username };
-  //     const access_token = await this.jwtService.signAsync(payload);
-  //     return { access_token };
-  //   }
-  //   throw new UnauthorizedException('Invalid credentials, Login e Senha');
-  // }
-
-  async login(username: string, password: string): Promise<string> {
+  async login(username: string, password: string): Promise<object> {
     const wasUser = await this.validateUser(username, password);
     const load = {user: username, sub: wasUser.id};
-    // const expiresIn = '24h'; //process.env.JWT_EXPIRES_IN;
-    // const accessToken = await this.jwtService.signAsync(load, { expiresIn });
     const accessToken = await this.jwtService.signAsync(load);
     console.log('O erro pode estar no auth.service ');
-    return accessToken;
+    return { acess_token: accessToken };
   }
   
 
