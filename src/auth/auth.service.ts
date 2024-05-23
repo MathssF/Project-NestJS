@@ -44,7 +44,8 @@ export class AuthService {
     const wasUser = await this.validateUser(username, password);
     const load = {user: username, sub: wasUser.id};
     const expiresIn = process.env.JWT_EXPIRES_IN;
-    const accessToken = this.jwtService.sign(load, { expiresIn });
+    const accessToken = await this.jwtService.signAsync(load, { expiresIn });
+    console.log('O erro pode estar no auth.service ');
     return {
       access_token: {
         load: accessToken,

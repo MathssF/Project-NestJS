@@ -18,6 +18,7 @@ export class AuthController {
   // @Public()
   @Post('login')
   async login(@Body() loginDto: { username: string, password: string }) {
+    console.log('Passando pelo controller ');
     return this.authService.login(loginDto.username, loginDto.password);
   }
 
