@@ -6,6 +6,7 @@ import { GenreRepository } from './entities/genres.repository';
 import { MovieRepository } from './entities/movies.repository';
 import { MovieGenreRepository } from './entities/movie-genre.repository';
 import { RatingRepository } from 'src/user/entities/rating.repository';
+// import { RedisModule } from 'src/redis/redis.module';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 
@@ -24,22 +25,50 @@ export class MovieService {
     private readonly ratingRepository: RatingRepository,
   ) {}
   async findGenres(): Promise<Genre[]> {
+    // const cacheKey = 'genres';
+    // const cachedGenres = await this.redisService.get(cacheKey);
+
+    // if(cachedGenres) {
+    //   return JSON.parse(cachedGenres);
+    // }
     const listGenres = this.genreRepository.find();
+    // await this.redisService.set(cacheKey, JSON.stringify(listGenres), 3600);
     return listGenres;
   }
 
   async findGenresName(): Promise<string[]> {
+    // const cacheKey = 'genreNames';
+    // const cachedGenreNames = await this.redisService.get(cacheKey);
+
+    // if (cachedGenreNames) {
+    //   return JSON.parse(cachedGenreNames);
+    // }
     const genres = await this.genreRepository.find();
     const listNames = genres.map(genre => genre.name);
+    // await this.redisService.set(cacheKey, JSON.stringify(listNames), 3600);
     return listNames;
   }
  
   async findAllMovies(): Promise<Movie[]> {
+    // const cacheKey = 'allMovies';
+    // const cachedMovies = await this.redisService.get(cacheKey);
+
+    // if (cachedMovies) {
+    //   return JSON.parse(cachedMovies);
+    // }
     const listMovies = this.movieRepository.find();
+    // await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
     return listMovies;
   }
 
   async findMovieById(id: number): Promise<any> {
+    // const cacheKey = `theMovie:${id}`;
+    // const cachedMovie = await this.redisService.get(cacheKey);
+
+    // if (cachedMovie) {
+    //   return JSON.parse(cachedMovie);
+    // }
+
     const movie = this.movieRepository.findOne({
         where: {
             id: id,
@@ -48,21 +77,39 @@ export class MovieService {
     if (!movie) {
         throw new NotFoundException(`Movie with ID ${id} not found`);
       }
+    // Buscar todas as avaliações relacionadas ao filme
     const ratings = await this.ratingRepository.find({
       where: { movieId: id },
     });
+
     if (ratings.length === 0) {
+      // await this.redisService.set(cacheKey, JSON.stringify(movie), 3600);
       return movie;
     }
+
+    // Extrair os valores de avaliação e calcular a média
     const votesArray = ratings.map(rating => rating.rating); // Supondo que a coluna de valor de avaliação é 'value'
     const averageRating = votesArray.length
       ? (votesArray.reduce((a, b) => a + b, 0) / votesArray.length).toFixed(1)
       : null;
+
+    // Adicionar a média das avaliações ao objeto do filme
     const movieWithRating = { ...movie, rating: averageRating };
+
+    // await this.redisService.set(cacheKey, JSON.stringify(movieWithRating), 3600);
+
     return movieWithRating;
   }
 
+  // Agora filtrar filmes por genero
+
   async findMoviesByGenreId(genreId: number): Promise<Movie[]> {
+    // const cacheKey = `theGenre:${genreId}`;
+    // const cachedMovies = await this.redisService.get(cacheKey);
+
+    // if (cachedMovies) {
+    //     return JSON.parse(cachedMovies);
+    // }
     const movieGenres = await this.movieGenreRepository.find({
         where: { genre: { id: genreId } }, relations: ['movie'],
     });
@@ -72,6 +119,7 @@ export class MovieService {
       return [];
     }
     const listMovies = this.movieRepository.findByIds(movieIds);
+    // await this.redisService.set(cacheKey, JSON.stringify(listMovies), 3600);
     return listMovies;
   }
 
@@ -79,25 +127,32 @@ export class MovieService {
     const genre = await this.genreRepository.findOne({ where: { name: genreName } });
     if (!genre) {
         return [];
-    }
+    } // Utilizar o ID do gênero para buscar os filmes
     return this.findMoviesByGenreId(genre.id);
   }
+
+  // Agora funções como votar, adicionar, remover e editar filmes:
+
   async vote(userId: number, movieId: number, voteValue: number): Promise<void> {
+    // Verifica se o usuário existe
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
-    }
+    } // Verifica se o usuário tem permissão para votar
     if (!user.authority.vote) {
       throw new ForbiddenException('User does not have permission to vote');
-    }
+    } // Verifica o se o valor que ele votou esta dentro de 1 e 5 e é um inteiro:
     if (!Number.isInteger(voteValue) || voteValue < 1 || voteValue > 5) {
         throw new ForbiddenException('You need chosse a value between 1 and 5')
     }
+
+    // Verifica se o filme existe
     const movie = await this.movieRepository.findOne({ where: { id: movieId } });
     if (!movie) {
       throw new NotFoundException(`Movie with ID ${movieId} not found`);
     }
 
+    // Cria ou atualiza a classificação do usuário para o filme
     let rating = await this.ratingRepository.findOne({ where: { userId, movieId } });
     if (rating) {
       rating.rating = voteValue;
@@ -108,6 +163,7 @@ export class MovieService {
   }
 
   async create(movieData: CreateMovieDto): Promise<Movie> {
+    // Verifica se o ID fornecido já existe
     if (movieData.id) {
       const existingMovie = await this.movieRepository.findOne({
         where: { id: movieData.id }
@@ -117,6 +173,7 @@ export class MovieService {
       }
     }
   
+    // Cria um novo filme com os dados fornecidos (ID, se fornecido)
     const movie = this.movieRepository.create({
       name: movieData.name,
       description: movieData.description,
@@ -124,8 +181,10 @@ export class MovieService {
       ...(movieData.id && { id: movieData.id }), // Inclui o ID apenas se fornecido
     });
   
+    // Salva o filme no banco de dados
     const savedMovie = await this.movieRepository.save(movie);
   
+    // Associa gêneros ao filme, se fornecidos
     if (movieData.genres && movieData.genres.length > 0) {
       for (const genreId of movieData.genres) {
         const genre = await this.genreRepository.findOne({
@@ -142,6 +201,14 @@ export class MovieService {
         });
       }
     }
+  
+    // // Limpa cache do Redis
+    // await this.redisService.del('allMovies');
+    // if (movieData.genres) {
+    //   for (const genreId of movieData.genres) {
+    //     await this.redisService.del(`theGenre:${genreId}`);
+    //   }
+    // }
   
     return savedMovie;
   }
@@ -199,6 +266,24 @@ export class MovieService {
       }
     }
   
+    // await this.redisService.del('allMovies');
+    // if (movieData.listGenres) {
+    //   for (const genreId of movieData.listGenres) {
+    //     await this.redisService.del(`theGenre:${genreId}`);
+    //   }
+    // } else {
+    //   if (movieData.addGenres) {
+    //     for (const genreId of movieData.addGenres) {
+    //       await this.redisService.del(`theGenre:${genreId}`);
+    //     }
+    //   }
+    //   if (movieData.delGenres) {
+    //     for (const genreId of movieData.delGenres) {
+    //       await this.redisService.del(`theGenre:${genreId}`);
+    //     }
+    //   }
+    // }
+  
     return movie;
   }
 
@@ -208,6 +293,15 @@ export class MovieService {
       throw new NotFoundException('Movie not found');
     }
     await this.movieRepository.remove(movie);
+
+    // Limpa o cache de allMovies
+    // await this.redisService.del('allMovies');
+
+    // // Limpa o cache relacionado ao gênero do filme
+    // const genres = movie.genres.map(genre => genre.id);
+    // for (const genreId of genres) {
+    //   await this.redisService.del(`theGenre:${genreId}`);
+    // }
     return { success: true };
   }
 }

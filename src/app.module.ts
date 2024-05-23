@@ -15,17 +15,9 @@ import { HttpAdapterHost } from '@nestjs/core';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true, // torna as configurações globais
     }),
-    // CacheModule.registerAsync({
-    //   useFactory: async () => ({
-    //     store: redisStore as any, // Forçando o tipo para resolver o erro
-    //     host: 'localhost',
-    //     port: 6379,
-    //   }),
-    // }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -47,18 +39,18 @@ export class AppModule implements NestModule {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   configure() {
-    const app = this.httpAdapterHost.httpAdapter.getInstance();
-    const config = new DocumentBuilder()
-      .setTitle('Movies Database')
-      .setDescription('Uma API que passa informação sobre uma lista de filmes usando o JWT')
-      .setVersion('1.0')
-      .addTag('Movies')
-      .addTag('Database. postgres')
-      .addTag('NestJG')
-      .addTag('JWT')
-      .addTag('MKS')
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
+    // const app = this.httpAdapterHost.httpAdapter.getInstance();
+    // const config = new DocumentBuilder()
+    //   .setTitle('Movies Database')
+    //   .setDescription('Uma API que passa informação sobre uma lista de filmes usando o JWT')
+    //   .setVersion('1.0')
+    //   .addTag('Movies')
+    //   .addTag('Database. postgres')
+    //   .addTag('NestJG')
+    //   .addTag('JWT')
+    //   .addTag('MKS')
+    //   .build();
+    // const document = SwaggerModule.createDocument(app, config);
+    // SwaggerModule.setup('api', app, document);
   }
 }

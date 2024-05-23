@@ -1,11 +1,7 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
   NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
