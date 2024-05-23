@@ -2,6 +2,7 @@ import {
   Controller, Get, Post, Body, Param,
   Delete, UseGuards, ParseIntPipe, Put,
   NotFoundException, UnauthorizedException,
+  Headers,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
@@ -65,10 +66,10 @@ export class MovieController {
   @Post('vote/:id')
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
-    @Body('token') token: string,
+    @Headers('authorization') authorization: string,
     @Body('rating', ParseIntPipe) rating: number,
   ): Promise<void> {
-    const userId = await this.authService.getUserIdFromToken(token);
+    const userId = await this.authService.getUserIdFromToken(authorization);
     if (userId === null) {
       throw new UnauthorizedException('Token inválido');
     }
@@ -77,10 +78,10 @@ export class MovieController {
 
   @Post()
   async create(
-    @Body('token') token: string,
+    @Headers('authorization') authorization: string,
     @Body() createMovieDto: CreateMovieDto,
     ): Promise<Movie> {
-      const userId = await this.authService.getUserIdFromToken(token);
+      const userId = await this.authService.getUserIdFromToken(authorization);
       if (userId === null) {
         throw new UnauthorizedException('Token inválido');
       }
@@ -90,10 +91,10 @@ export class MovieController {
   @Put(':id')
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
-    @Body('token') token: string,
+    @Headers('authorization') authorization: string,
     @Body() movieData: EditMoviePost
   ): Promise<Movie> {
-    const userId = await this.authService.getUserIdFromToken(token);
+    const userId = await this.authService.getUserIdFromToken(authorization);
       if (userId === null) {
         throw new UnauthorizedException('Token inválido');
       }
@@ -111,9 +112,9 @@ export class MovieController {
   @Delete(':id')
   async delete(
     @Param('id') id: number,
-    @Body('token') token: string,
+    @Headers('authorization') authorization: string,
   ): Promise<{ success: boolean }> {
-    const userId = await this.authService.getUserIdFromToken(token);
+    const userId = await this.authService.getUserIdFromToken(authorization);
       if (userId === null) {
         throw new UnauthorizedException('Token inválido');
       }

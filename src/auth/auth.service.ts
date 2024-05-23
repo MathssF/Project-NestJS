@@ -7,6 +7,17 @@ import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+function removeBearerPrefix(tokenWithBearer: string): string {
+  // Verifica se o token começa com "Bearer "
+  if (tokenWithBearer.startsWith("Bearer ")) {
+      // Remove "Bearer " e retorna o restante do token
+      return tokenWithBearer.slice(7);
+  } else {
+      // Se não começar com "Bearer ", apenas retorna o token original
+      return tokenWithBearer;
+  }
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -55,8 +66,14 @@ export class AuthService {
   }
 
   async getUserIdFromToken(token: string): Promise<number | null> {
+    console.log('entrou no Get User Id From Token, com o seguinte token: ', token, 'É isto');
+
+    const newToken = removeBearerPrefix(token)
+    console.log('New Token... ', newToken)
     try {
-      const decodedToken = this.jwtService.verify(token);
+      console.log('Entrou no Try');
+      const decodedToken = this.jwtService.verify(newToken);
+      console.log('Decoded: ', decodedToken);
       if (decodedToken && typeof decodedToken === 'object' && 'sub' in decodedToken) {
         return decodedToken.sub; // 'sub' é uma convenção JWT para o user id
       }
