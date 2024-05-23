@@ -6,6 +6,8 @@ import { MovieGenre } from 'src/movie/entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { RatingRepository } from 'src/user/entities/rating.repository';
 import { UserRepository } from 'src/user/entities/user.repository';
+import * as bcrypt from 'bcryptjs';
+
 
 @Injectable()
 export class SeedService {
@@ -46,6 +48,12 @@ export class SeedService {
     for (const user of users) {
       const exists = await this.userRepository.findOneBy({ username: user.username });
       if (!exists) {
+        const hashedPassword = await bcrypt.hash(user.password, 10); // Custo de 10
+
+        // Substitua a senha original pela senha com hash
+        user.password = hashedPassword;
+
+        // Salve o usuário no banco de dados
         await this.userRepository.save(user);
       }
     }

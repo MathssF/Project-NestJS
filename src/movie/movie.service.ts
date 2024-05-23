@@ -266,23 +266,23 @@ export class MovieService {
       }
     }
   
-    await this.redisService.del('allMovies');
-    if (movieData.listGenres) {
-      for (const genreId of movieData.listGenres) {
-        await this.redisService.del(`theGenre:${genreId}`);
-      }
-    } else {
-      if (movieData.addGenres) {
-        for (const genreId of movieData.addGenres) {
-          await this.redisService.del(`theGenre:${genreId}`);
-        }
-      }
-      if (movieData.delGenres) {
-        for (const genreId of movieData.delGenres) {
-          await this.redisService.del(`theGenre:${genreId}`);
-        }
-      }
-    }
+    // await this.redisService.del('allMovies');
+    // if (movieData.listGenres) {
+    //   for (const genreId of movieData.listGenres) {
+    //     await this.redisService.del(`theGenre:${genreId}`);
+    //   }
+    // } else {
+    //   if (movieData.addGenres) {
+    //     for (const genreId of movieData.addGenres) {
+    //       await this.redisService.del(`theGenre:${genreId}`);
+    //     }
+    //   }
+    //   if (movieData.delGenres) {
+    //     for (const genreId of movieData.delGenres) {
+    //       await this.redisService.del(`theGenre:${genreId}`);
+    //     }
+    //   }
+    // }
   
     return movie;
   }
