@@ -168,25 +168,57 @@ export class MovieService {
     await this.ratingRepository.save(rating);
   }
 
-  // async create(movieData: Partial<Movie>): Promise<Movie> {
   async create(movieData: CreateMoviePost): Promise<Movie> {
+    // Verifica se o ID fornecido já existe
     if (movieData.id) {
-      const movieWithId = {
-        id: movieData.id,
-        name: movieData.name,
-        description: movieData.description,
-        release_date: movieData.release_date,
-      }
-      const movie = this.movieRepository.create(movieWithId);
-      for(const elem of movieData.genres) {
-        const genres = this.movieGenreRepository.create({
-          movie_id: movieData.id,
-          genre_id: elem,
-        })
+      const existingMovie = await this.movieRepository.findOne({
+        where: { id: movieData.id }
+      });
+      if (existingMovie) {
+        throw new NotFoundException(`Movie with ID ${movieData.id} already exists`);
       }
     }
-    // return await this.movieRepository.save(movie);
+  
+    // Cria um novo filme com os dados fornecidos (ID, se fornecido)
+    const movie = this.movieRepository.create({
+      name: movieData.name,
+      description: movieData.description,
+      release_date: movieData.release_date,
+      ...(movieData.id && { id: movieData.id }), // Inclui o ID apenas se fornecido
+    });
+  
+    // Salva o filme no banco de dados
+    const savedMovie = await this.movieRepository.save(movie);
+  
+    // Associa gêneros ao filme, se fornecidos
+    if (movieData.genres && movieData.genres.length > 0) {
+      for (const genreId of movieData.genres) {
+        const genre = await this.genreRepository.findOne({
+          where: {
+            id: genreId,
+          }
+        });
+        if (!genre) {
+          throw new NotFoundException(`Genre with ID ${genreId} not found`);
+        }
+        await this.movieGenreRepository.save({
+          movie: savedMovie,
+          genre: genre,
+        });
+      }
+    }
+  
+    // Limpa cache do Redis
+    await this.redisService.del('allMovies');
+    if (movieData.genres) {
+      for (const genreId of movieData.genres) {
+        await this.redisService.del(`theGenre:${genreId}`);
+      }
+    }
+  
+    return savedMovie;
   }
+  
 
   async edit(id: number, movieData: Partial<Movie>): Promise<Movie> {
     const movie = await this.movieRepository.findOne({ where: { id: id } });
