@@ -2,7 +2,7 @@ import {
   Controller, Get, Post, Body, Param,
   Delete, UseGuards, ParseIntPipe, Put,
   NotFoundException, UnauthorizedException,
-  Headers,
+  Headers, Request,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
@@ -21,8 +21,8 @@ interface newMovie {
   CreateMovieDto: CreateMovieDto;
 }
 
-@UseGuards(AuthGuard)
 @Controller('movie')
+@UseGuards(AuthGuard)
 export class MovieController {
   constructor(
     private readonly movieService: MovieService,
@@ -63,45 +63,81 @@ export class MovieController {
   }
 
   // Votar, Adicionar, Editar e Deletar:
+  // @Post('vote/:id')
+  // async voteMovie(
+  //   @Param('id', ParseIntPipe) movieId: number,
+  //   @Headers('authorization') authorization: string,
+  //   @Body('userId') userId: number,
+  //   @Body('rating', ParseIntPipe) rating: number,
+  // ): Promise<void> {
+  //   // const userId = await this.authService.getUserIdFromToken(authorization);
+  //   // if (userId === null) {
+  //   //   throw new UnauthorizedException('Token inválido');
+  //   // }
+  //   await this.movieService.vote(userId, movieId, rating);
+  //   // await this.movieService.vote(userId, movieId, rating);
+  // }
   @Post('vote/:id')
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
     @Headers('authorization') authorization: string,
-    @Body('userId') userId: number,
     @Body('rating', ParseIntPipe) rating: number,
+    @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<void> {
-    // const userId = await this.authService.getUserIdFromToken(authorization);
-    // if (userId === null) {
-    //   throw new UnauthorizedException('Token inválido');
-    // }
+    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     await this.movieService.vote(userId, movieId, rating);
-    // await this.movieService.vote(userId, movieId, rating);
   }
 
+  // @Post()
+  // async create(
+  //   @Headers('authorization') authorization: string,
+  //   @Body() createMovieDto: CreateMovieDto,
+  //   @Body('userId') userId: number,
+  //   ): Promise<Movie> {
+  //     // const userId = await this.authService.getUserIdFromToken(authorization);
+  //     // if (userId === null) {
+  //     //   throw new UnauthorizedException('Token inválido');
+  //     // }
+  //   return await this.movieService.create(createMovieDto, userId);
+  // }
   @Post()
   async create(
     @Headers('authorization') authorization: string,
     @Body() createMovieDto: CreateMovieDto,
-    @Body('userId') userId: number,
-    ): Promise<Movie> {
-      // const userId = await this.authService.getUserIdFromToken(authorization);
-      // if (userId === null) {
-      //   throw new UnauthorizedException('Token inválido');
-      // }
+    @Request() request // Adicione a injeção de dependência para acessar o userId
+  ): Promise<Movie> {
+    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     return await this.movieService.create(createMovieDto, userId);
   }
 
+  // @Put(':id')
+  // async updateMovie(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Headers('authorization') authorization: string,
+  //   @Body() movieData: EditMoviePost,
+  //   @Body('userId') userId: number,
+  // ): Promise<Movie> {
+  //   // const userId = await this.authService.getUserIdFromToken(authorization);
+  //   //   if (userId === null) {
+  //   //     throw new UnauthorizedException('Token inválido');
+  //   //   }
+  //   try {
+  //     return await this.movieService.edit(id, movieData, userId);
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw new NotFoundException(error.message);
+  //     }
+  //     throw error;
+  //   }
+  // }
   @Put(':id')
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
     @Headers('authorization') authorization: string,
     @Body() movieData: EditMoviePost,
-    @Body('userId') userId: number,
+    @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<Movie> {
-    // const userId = await this.authService.getUserIdFromToken(authorization);
-    //   if (userId === null) {
-    //     throw new UnauthorizedException('Token inválido');
-    //   }
+    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     try {
       return await this.movieService.edit(id, movieData, userId);
     } catch (error) {
@@ -112,17 +148,29 @@ export class MovieController {
     }
   }
 
-
+  // @Delete(':id')
+  // async delete(
+  //   @Param('id') id: number,
+  //   @Headers('authorization') authorization: string,
+  //   @Body('userId') userId: number,
+  // ): Promise<{ success: boolean }> {
+  //   // const userId = await this.authService.getUserIdFromToken(authorization);
+  //   //   if (userId === null) {
+  //   //     throw new UnauthorizedException('Token inválido');
+  //   //   }
+  //   const result = await this.movieService.delete(id, userId);
+  //   if (!result.success) {
+  //     throw new NotFoundException('Movie not found');
+  //   }
+  //   return result;
+  // }
   @Delete(':id')
   async delete(
     @Param('id') id: number,
     @Headers('authorization') authorization: string,
-    @Body('userId') userId: number,
+    @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<{ success: boolean }> {
-    // const userId = await this.authService.getUserIdFromToken(authorization);
-    //   if (userId === null) {
-    //     throw new UnauthorizedException('Token inválido');
-    //   }
+    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     const result = await this.movieService.delete(id, userId);
     if (!result.success) {
       throw new NotFoundException('Movie not found');
