@@ -20,6 +20,16 @@ interface CreateMoviePost {
   genres: number[];
 }
 
+interface EditMoviePost {
+  name?: string;
+  description?: string;
+  release_date?: string;
+  listGenres?: number[];
+  addGenres?: number[];
+  delGenres?: number[];
+}
+
+
 @Injectable()
 export class MovieService {
   constructor(
@@ -220,13 +230,77 @@ export class MovieService {
   }
   
 
-  async edit(id: number, movieData: Partial<Movie>): Promise<Movie> {
+  async edit(id: number, movieData: EditMoviePost): Promise<Movie> {
     const movie = await this.movieRepository.findOne({ where: { id: id } });
     if (!movie) {
       throw new NotFoundException('Movie not found');
     }
-    Object.assign(movie, movieData);
-    return await this.movieRepository.save(movie);
+  
+    if (movieData.name) {
+      movie.name = movieData.name;
+    }
+    if (movieData.description) {
+      movie.description = movieData.description;
+    }
+    if (movieData.release_date) {
+      movie.release_date = movieData.release_date;
+    }
+  
+    await this.movieRepository.save(movie);
+  
+    if (movieData.listGenres) {
+      await this.movieGenreRepository.delete({ movie: { id: movie.id } });
+      for (const genreId of movieData.listGenres) {
+        const genre = await this.genreRepository.findOne({ where: { id: genreId } });
+        if (!genre) {
+          throw new NotFoundException(`Genre with ID ${genreId} not found`);
+        }
+        await this.movieGenreRepository.save({ movie, genre });
+      }
+    } else {
+      if (movieData.addGenres) {
+        for (const genreId of movieData.addGenres) {
+          const genre = await this.genreRepository.findOne({ where: { id: genreId } });
+          if (!genre) {
+            throw new NotFoundException(`Genre with ID ${genreId} not found`);
+          }
+          const existingRelation = await this.movieGenreRepository.findOne({ where: { movie: { id: movie.id }, genre: { id: genre.id } } });
+          if (!existingRelation) {
+            await this.movieGenreRepository.save({ movie, genre });
+          }
+        }
+      }
+  
+      if (movieData.delGenres) {
+        for (const genreId of movieData.delGenres) {
+          const genre = await this.genreRepository.findOne({ where: { id: genreId } });
+          if (!genre) {
+            throw new NotFoundException(`Genre with ID ${genreId} not found`);
+          }
+          await this.movieGenreRepository.delete({ movie: { id: movie.id }, genre: { id: genre.id } });
+        }
+      }
+    }
+  
+    await this.redisService.del('allMovies');
+    if (movieData.listGenres) {
+      for (const genreId of movieData.listGenres) {
+        await this.redisService.del(`theGenre:${genreId}`);
+      }
+    } else {
+      if (movieData.addGenres) {
+        for (const genreId of movieData.addGenres) {
+          await this.redisService.del(`theGenre:${genreId}`);
+        }
+      }
+      if (movieData.delGenres) {
+        for (const genreId of movieData.delGenres) {
+          await this.redisService.del(`theGenre:${genreId}`);
+        }
+      }
+    }
+  
+    return movie;
   }
 
   async delete(id: number): Promise<{ success: boolean }> {

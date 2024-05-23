@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Put, NotFoundException } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
+import { EditMoviePost } from './dto/update-movie.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
@@ -67,21 +67,32 @@ export class MovieController {
   }
 
   @Post()
-  async create(@Body() movieData: CreateMoviePost): Promise<Movie> {
-    return await this.movieService.create(movieData);
+  async create(@Body() createMovieDto: CreateMovieDto): Promise<Movie> {
+    return await this.movieService.create(createMovieDto);
   }
 
   @Put(':id')
-  async edit(@Param('id') id: number, @Body() movieData: Partial<Movie>): Promise<Movie> {
-    return await this.movieService.edit(id, movieData);
+  async updateMovie(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() movieData: EditMoviePost
+  ): Promise<Movie> {
+    try {
+      return await this.movieService.edit(id, movieData);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: number): Promise<{ success: boolean }> {
-    const result = await this.movieService.delete(id);
-    if (!result.success) {
-      throw new NotFoundException('Movie not found');
-    }
-    return result;
-  }
+
+  // @Delete(':id')
+  // async delete(@Param('id') id: number): Promise<{ success: boolean }> {
+  //   const result = await this.movieService.delete(id);
+  //   if (!result.success) {
+  //     throw new NotFoundException('Movie not found');
+  //   }
+  //   return result;
+  // }
 }
