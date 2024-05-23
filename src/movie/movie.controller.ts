@@ -9,9 +9,15 @@ import { EditMoviePost } from './dto/update-movie.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
+import { AuthService } from 'src/auth/auth.service';
 
 interface MovieR extends Movie {
   rating?: number;
+}
+
+interface newMovie {
+  userId: number;
+  CreateMovieDto: CreateMovieDto;
 }
 
 @Controller('movie')
@@ -64,24 +70,35 @@ export class MovieController {
   ): Promise<void> {
     const userId = await this.authService.getUserIdFromToken(token);
     if (userId === null) {
-      // Lida com o caso em que o userId não pôde ser extraído do token
       throw new UnauthorizedException('Token inválido');
     }
     await this.movieService.vote(userId, movieId, rating);
   }
 
   @Post()
-  async create(@Body() createMovieDto: CreateMovieDto): Promise<Movie> {
-    return await this.movieService.create(createMovieDto);
+  async create(
+    @Body('token') token: string,
+    @Body() createMovieDto: CreateMovieDto,
+    ): Promise<Movie> {
+      const userId = await this.authService.getUserIdFromToken(token);
+      if (userId === null) {
+        throw new UnauthorizedException('Token inválido');
+      }
+    return await this.movieService.create(createMovieDto, userId);
   }
 
   @Put(':id')
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
+    @Body('token') token: string,
     @Body() movieData: EditMoviePost
   ): Promise<Movie> {
+    const userId = await this.authService.getUserIdFromToken(token);
+      if (userId === null) {
+        throw new UnauthorizedException('Token inválido');
+      }
     try {
-      return await this.movieService.edit(id, movieData);
+      return await this.movieService.edit(id, movieData, userId);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);
@@ -92,8 +109,15 @@ export class MovieController {
 
 
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<{ success: boolean }> {
-    const result = await this.movieService.delete(id);
+  async delete(
+    @Param('id') id: number,
+    @Body('token') token: string,
+  ): Promise<{ success: boolean }> {
+    const userId = await this.authService.getUserIdFromToken(token);
+      if (userId === null) {
+        throw new UnauthorizedException('Token inválido');
+      }
+    const result = await this.movieService.delete(id, userId);
     if (!result.success) {
       throw new NotFoundException('Movie not found');
     }

@@ -112,7 +112,7 @@ export class MovieService {
     await this.ratingRepository.save(rating);
   }
 
-  async create(movieData: CreateMovieDto): Promise<Movie> {
+  async create(movieData: CreateMovieDto, userId: number): Promise<Movie> {
     if (movieData.id) {
       const existingMovie = await this.movieRepository.findOne({
         where: { id: movieData.id }
@@ -121,7 +121,14 @@ export class MovieService {
         throw new NotFoundException(`Movie with ID ${movieData.id} already exists`);
       }
     }
-  
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.authority.add) {
+      throw new ForbiddenException('User does not have permission to create new');
+    }
     const movie = this.movieRepository.create({
       name: movieData.name,
       description: movieData.description,
@@ -152,10 +159,18 @@ export class MovieService {
   }
   
 
-  async edit(id: number, movieData: EditMoviePost): Promise<Movie> {
+  async edit(id: number, movieData: EditMoviePost, userId: number): Promise<Movie> {
     const movie = await this.movieRepository.findOne({ where: { id: id } });
     if (!movie) {
       throw new NotFoundException('Movie not found');
+    }
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.authority.edit) {
+      throw new ForbiddenException('User does not have permission to Edit');
     }
   
     if (movieData.name) {
@@ -207,10 +222,17 @@ export class MovieService {
     return movie;
   }
 
-  async delete(id: number): Promise<{ success: boolean }> {
+  async delete(id: number, userId: number): Promise<{ success: boolean }> {
     const movie = await this.movieRepository.findOne({ where: { id: id } });
     if (!movie) {
       throw new NotFoundException('Movie not found');
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.authority.del) {
+      throw new ForbiddenException('User does not have permission to Delete');
     }
     await this.movieRepository.remove(movie);
     return { success: true };
