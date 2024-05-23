@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -16,8 +17,17 @@ export class AuthService {
     console.log('Entrou no User');
     const user = await this.userService.getUserByName(username);
     console.log('User:...  ', user);
-    if (user?.password !== password) {
-      throw new UnauthorizedException('Erro na validação do signIn');
+    // if (user?.password !== password) {
+    //   throw new UnauthorizedException('Erro na validação do signIn');
+    // }
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    // Verifica se a senha fornecida coincide com o hash armazenado
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Senha inválida');
     }
     const payload = { sub: user.id, username: user.username };
     return {
