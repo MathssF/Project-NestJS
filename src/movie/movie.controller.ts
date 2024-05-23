@@ -7,7 +7,7 @@ import {
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
 import { AuthService } from 'src/auth/auth.service';
@@ -21,7 +21,7 @@ interface newMovie {
   CreateMovieDto: CreateMovieDto;
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard)
 @Controller('movie')
 export class MovieController {
   constructor(
@@ -67,24 +67,27 @@ export class MovieController {
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
     @Headers('authorization') authorization: string,
+    @Body('userId') userId: number,
     @Body('rating', ParseIntPipe) rating: number,
   ): Promise<void> {
-    const userId = await this.authService.getUserIdFromToken(authorization);
-    if (userId === null) {
-      throw new UnauthorizedException('Token inválido');
-    }
+    // const userId = await this.authService.getUserIdFromToken(authorization);
+    // if (userId === null) {
+    //   throw new UnauthorizedException('Token inválido');
+    // }
     await this.movieService.vote(userId, movieId, rating);
+    // await this.movieService.vote(userId, movieId, rating);
   }
 
   @Post()
   async create(
     @Headers('authorization') authorization: string,
     @Body() createMovieDto: CreateMovieDto,
+    @Body('userId') userId: number,
     ): Promise<Movie> {
-      const userId = await this.authService.getUserIdFromToken(authorization);
-      if (userId === null) {
-        throw new UnauthorizedException('Token inválido');
-      }
+      // const userId = await this.authService.getUserIdFromToken(authorization);
+      // if (userId === null) {
+      //   throw new UnauthorizedException('Token inválido');
+      // }
     return await this.movieService.create(createMovieDto, userId);
   }
 
@@ -92,12 +95,13 @@ export class MovieController {
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
     @Headers('authorization') authorization: string,
-    @Body() movieData: EditMoviePost
+    @Body() movieData: EditMoviePost,
+    @Body('userId') userId: number,
   ): Promise<Movie> {
-    const userId = await this.authService.getUserIdFromToken(authorization);
-      if (userId === null) {
-        throw new UnauthorizedException('Token inválido');
-      }
+    // const userId = await this.authService.getUserIdFromToken(authorization);
+    //   if (userId === null) {
+    //     throw new UnauthorizedException('Token inválido');
+    //   }
     try {
       return await this.movieService.edit(id, movieData, userId);
     } catch (error) {
@@ -113,11 +117,12 @@ export class MovieController {
   async delete(
     @Param('id') id: number,
     @Headers('authorization') authorization: string,
+    @Body('userId') userId: number,
   ): Promise<{ success: boolean }> {
-    const userId = await this.authService.getUserIdFromToken(authorization);
-      if (userId === null) {
-        throw new UnauthorizedException('Token inválido');
-      }
+    // const userId = await this.authService.getUserIdFromToken(authorization);
+    //   if (userId === null) {
+    //     throw new UnauthorizedException('Token inválido');
+    //   }
     const result = await this.movieService.delete(id, userId);
     if (!result.success) {
       throw new NotFoundException('Movie not found');

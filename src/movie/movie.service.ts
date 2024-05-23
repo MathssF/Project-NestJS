@@ -232,7 +232,7 @@ export class MovieService {
       throw new NotFoundException('User not found');
     }
     if (!user.authority.del) {
-      throw new ForbiddenException('User does not have permission to Delete');
+      throw new ForbiddenException('User does not have permission to create new');
     }
     await this.movieRepository.remove(movie);
     return { success: true };

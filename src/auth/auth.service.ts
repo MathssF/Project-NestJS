@@ -1,87 +1,25 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-// import { UserRepository } from 'src/user/entities/user.repository';
-import { User } from 'src/user/entities/user.entity';
-import * as bcrypt from 'bcryptjs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
-function removeBearerPrefix(tokenWithBearer: string): string {
-  console.log('Entrou na funçã de remover o Bearer');
-  // Verifica se o token começa com "Bearer "
-  if (tokenWithBearer.startsWith("Bearer ")) {
-      // Remove "Bearer " e retorna o restante do token
-      console.log('Removeu!');
-      return tokenWithBearer.slice(7);
-  } else {
-      // Se não começar com "Bearer ", apenas retorna o token original
-      console.log('Não precisou remover pois não tinha!');
-      return tokenWithBearer;
-  }
-}
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
-    private jwtService: JwtService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private jwtService: JwtService
   ) {}
 
-  async createUser(username: string, email: string, password: string): Promise<User> {
-    const existingUser = await this.userService.getUserByName(username);
-    if (existingUser) {
-      throw new ConflictException('Username already exists');
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = this.userRepository.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
-    return this.userRepository.save(newUser);
-  }
-
-  async validateUser(username: string, password: string): Promise<User> {
+  async signIn(
+    username: string,
+    pass: string,
+  ): Promise<{ access_token: string }> {
     const user = await this.userService.getUserByName(username);
-    if (user && await user.validatePassword(password)) {
-      return user;
+    if (user?.password !== pass) {
+      throw new UnauthorizedException();
     }
-    throw new UnauthorizedException('Invalid credentials');
-  }
-  
-
-  async login(username: string, password: string): Promise<{ access_token: string }> {
-    console.log('Passou aqui pelo Auth Service');
-    const user = await this.userService.getUserByName(username);
-    if (user && await user.validatePassword(password)) {
-      console.log('Entrou no if de User e Pass');
-      const payload = { sub: user.id, username: user.username };
-      const access_token = await this.jwtService.signAsync(payload);
-      return { access_token };
-    }
-    throw new UnauthorizedException('Invalid credentials');
-  }
-  
-
-  async getUserIdFromToken(token: string): Promise<number | null> {
-    console.log('entrou no Get User Id From Token, com o seguinte token: ', token, 'É isto');
-
-    const newToken = removeBearerPrefix(token)
-    console.log('New Token... ', newToken)
-    try {
-      console.log('Entrou no Try');
-      const decodedToken = await this.jwtService.verifyAsync(newToken);
-      console.log('Decoded: ', decodedToken);
-      if (decodedToken && typeof decodedToken === 'object' && 'sub' in decodedToken) {
-        return decodedToken.sub; // 'sub' é uma convenção JWT para o user id
-      }
-      return null; // Retorne null se não conseguir extrair o user id do token
-    } catch (error) {
-      console.error('Erro ao verificar o token:', error.message);
-      return null; // Retorne null se houver um erro ao verificar o token
-    }
+    const payload = { sub: user.id, username: user.username };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
