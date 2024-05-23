@@ -21,8 +21,8 @@ interface newMovie {
   CreateMovieDto: CreateMovieDto;
 }
 
-@Controller('movie')
 @UseGuards(JwtAuthGuard)
+@Controller('movie')
 export class MovieController {
   constructor(
     private readonly movieService: MovieService,

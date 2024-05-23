@@ -8,6 +8,8 @@ import { Movie } from './entities/movies.entity';
 import { MovieGenre } from './entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -18,6 +20,10 @@ import { AuthModule } from 'src/auth/auth.module';
   controllers: [MovieController],
   providers: [
     MovieService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard
+    }
   ],
 })
 export class MovieModule {}
