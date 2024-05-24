@@ -4,11 +4,11 @@ import {
     MinLength,
     MaxLength,
     IsNotEmpty,
-    IsBoolean,
-    IsObject
+    // IsBoolean,
+    // IsObject
 } from 'class-validator';
 
-export class CreateUserDTO {
+export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(4)
@@ -25,19 +25,20 @@ export class CreateUserDTO {
   @IsNotEmpty()
   email: string;
 
-  @IsObject()
-  @IsNotEmpty()
-  authority: {
-    @IsBoolean()
-    vote: boolean;
+//   @IsObject()
+//   @IsNotEmpty()
+//   authority: {
+    
+//     @IsBoolean()
+//     vote: boolean;
 
-    @IsBoolean()
-    edit: boolean;
+//     @IsBoolean()
+//     edit: boolean;
 
-    @IsBoolean()
-    add: boolean;
+//     @IsBoolean()
+//     add: boolean;
 
-    @IsBoolean()
-    del: boolean;
-  };
+//     @IsBoolean()
+//     del: boolean;
+//   };
 }

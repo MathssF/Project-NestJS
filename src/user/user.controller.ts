@@ -17,7 +17,22 @@ export class UserController {
     // private readonly dataSource: DataSource,
   ) {}
 
-  @Public()
+  // @Public()
+  @Get('create')
+  async createNewUser(
+    @Param('username') username: string,
+    @Param('email') email: string,
+    @Param('password') password: string,
+  ): Promise<any> {
+    const data = {
+      username: username,
+      password: password,
+      email: email,
+    }
+    return this.userService.create(data);
+  }
+
+  // @Public()
   @Get('userid/:id')
   async getUserByID(@Param('id') id: string): Promise<User> {
     console.log('Entrou na rota de user id');
@@ -30,7 +45,7 @@ export class UserController {
     return user;
   }
 
-  @Public()
+  // @Public()
   @Get('username/:username')
   async getUserByName(@Param('username') username: string): Promise<User> {
     console.log('Entrou na rota de username');

@@ -1,20 +1,28 @@
-// import {
-//   Body,
-//   Controller,
-//   Get,
-//   HttpCode,
-//   HttpStatus,
-//   Post,
-//   Request,
-//   UseGuards
-// } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards
+} from '@nestjs/common';
 // import { AuthGuard } from './auth.guard';
-// import { AuthService } from './auth.service';
+import { AuthService } from './auth.service';
+import { LocalAuthGuard } from './guards/local.guard';
 // import { Public } from './constants';
 
-// @Controller('auth')
-// export class AuthController {
-//   constructor(private authService: AuthService) {}
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
+  login() {
+    return 'Realizar Login';
+  }
 
 //   @Public()
 //   @HttpCode(HttpStatus.OK)
@@ -28,4 +36,4 @@
 //   getProfile(@Request() req) {
 //     return req.user;
 //   }
-// }
+}
