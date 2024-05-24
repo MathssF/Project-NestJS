@@ -12,17 +12,11 @@ import {
     }
   
     handleRequest(err, user) {
-    //   if (err || !user) {
-    //     throw new UnauthorizedException(err?.message);
-    //   } // Aqui usamos ambos, deixei separado para o processo de desenvolvimento
-      if (err) {
+      console.log('Entrou no guardião');
+      if (err || !user) {
         throw new UnauthorizedException(err?.message);
-      }
-
-      if (!user) {
-        throw new UnauthorizedException('Need user');
-      }
-  
+      } 
+      console.log('Não encontrou nenhum erro no guardião');
       return user;
     }
   }

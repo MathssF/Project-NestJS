@@ -6,22 +6,23 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpAdapterHost } from '@nestjs/core';
+// import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import { User } from './user/entities/user.entity';
 import { Genre } from './movie/entities/genres.entity';
 import { Movie } from './movie/entities/movies.entity';
 import { MovieGenre } from './movie/entities/movie-genre.entity';
 import { Rating } from './user/entities/rating.entity';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // torna as configurações globais
+      // isGlobal: true, // torna as configurações globais
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -33,12 +34,16 @@ import { Rating } from './user/entities/rating.entity';
       entities: [User, Genre, Movie, MovieGenre, Rating],
       synchronize: true,
     }),
-    // AuthModule,
+    AuthModule,
     UserModule, MovieModule, SeedModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {
