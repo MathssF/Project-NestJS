@@ -7,10 +7,10 @@ import {
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+// import { AuthGuard } from 'src/auth/auth.guard';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
-import { AuthService } from 'src/auth/auth.service';
+// import { AuthService } from 'src/auth/auth.service';
 
 interface MovieR extends Movie {
   rating?: number;
@@ -25,7 +25,7 @@ interface newMovie {
 export class MovieController {
   constructor(
     private readonly movieService: MovieService,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
   ) {}
 
   @Get('genres')

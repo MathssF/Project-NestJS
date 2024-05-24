@@ -7,23 +7,23 @@ import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
 import { MovieGenre } from './entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
-import { AuthModule } from 'src/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from 'src/auth/auth.guard';
+// import { AuthModule } from 'src/auth/auth.module';
+// import { APP_GUARD } from '@nestjs/core';
+// import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     User, Genre, Movie, MovieGenre, Rating,
   ]),
-    AuthModule,
+    // AuthModule,
   ],
   controllers: [MovieController],
   providers: [
     MovieService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard
-    }
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard
+    // }
   ],
 })
 export class MovieModule {}

@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
+// import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
@@ -33,7 +33,8 @@ import { Rating } from './user/entities/rating.entity';
       entities: [User, Genre, Movie, MovieGenre, Rating],
       synchronize: true,
     }),
-    AuthModule, UserModule, MovieModule, SeedModule,
+    // AuthModule,
+    UserModule, MovieModule, SeedModule,
   ],
   controllers: [AppController],
   providers: [

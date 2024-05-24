@@ -23,6 +23,7 @@
 #### NestJS:
 
 Minha primeira aplicação NestJS, o que por sua vez, foi uma excelente oportunidade de aprender mais sobre este framework!
+Apesar do desafio inicial, NestJS se mostrou uma tecnologia bastante prática!
 
 #### JWT:
 
