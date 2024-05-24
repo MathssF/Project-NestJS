@@ -5,7 +5,7 @@ import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 // import { JwtStrategy } from './jwt.strategy';
 import { jwtConstants } from './constants';
-import { JwtInterceptor } from './jwt.interceptor';
+// import { JwtInterceptor } from './jwt.interceptor';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -18,7 +18,7 @@ import { APP_GUARD } from '@nestjs/core';
       signOptions: { expiresIn: '24h' },
     }),
   ],
-  providers: [AuthService, JwtInterceptor,  {
+  providers: [AuthService,  {
     provide: APP_GUARD,
     useClass: AuthGuard,
   },],
