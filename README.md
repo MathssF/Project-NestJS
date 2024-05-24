@@ -2,20 +2,20 @@
 
 ## Objetivos:
 
-- [] Desenvolver um sistema de autenticação JWT.
+- [ ] Desenvolver um sistema de autenticação JWT.
 - [X] Cconstruir uma CRUD de um catálogo de filmes.
-- [] Todos os endpoints dessa CRUD só devem ser consumidos por um usuário autenticado.
-- [] Usar Redis como cache
-- [] Fazer Deploy
+- [ ] Todos os endpoints dessa CRUD só devem ser consumidos por um usuário autenticado.
+- [ ] Usar Redis como cache
+- [ ] Fazer Deploy
 
 ## Ferramentas requeridas:
 
 - [X] TypeScript
 - [X] Nest.js
 - [X] TypeORM
-- [] Swagger
+- [ ] Swagger
 - [X] Docker
-- [] Redis
+- [ ] Redis
 - [X] PostgreSQL
 
 Projeto não finlizado a tempo (dia 23/05)
