@@ -18,9 +18,11 @@
 - [ ] Redis
 - [X] PostgreSQL
 
-Projeto não finlizado a tempo (dia 23/05)
-
 ## Dificuldades do projeto:
+
+#### NestJS:
+
+Minha primeira aplicação NestJS, o que por sua vez, foi uma excelente oportunidade de aprender mais sobre este framework!
 
 #### JWT:
 
