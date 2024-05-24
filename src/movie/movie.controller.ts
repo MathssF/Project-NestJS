@@ -61,37 +61,44 @@ export class MovieController {
     return this.movieService.findMoviesByGenreName(name);
   }
 
-  @Post('vote/:id')
-  async voteMovie(
-    @Param('id', ParseIntPipe) movieId: number,
-    @Headers('authorization') authorization: string,
-    @Body('rating', ParseIntPipe) rating: number,
-    @Request() request // Adicione a injeção de dependência para acessar o userId
-  ): Promise<void> {
-    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
-    await this.movieService.vote(userId, movieId, rating);
-  }
+  // @Post('vote/:id')
+  // async voteMovie(
+  //   @Param('id', ParseIntPipe) movieId: number,
+  //   @Headers('authorization') authorization: string,
+  //   @Body('rating', ParseIntPipe) rating: number,
+  //   @Request() request // Adicione a injeção de dependência para acessar o userId
+  // ): Promise<void> {
+  //   const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
+  //   await this.movieService.vote(userId, movieId, rating);
+  // }
 
   @Post()
   async create(
-    @Headers('authorization') authorization: string,
+    // @Headers('authorization') authorization: string,
     @Body() createMovieDto: CreateMovieDto,
     @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<Movie> {
-    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
-    return await this.movieService.create(createMovieDto, userId);
+    // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
+    return await this.movieService.create(
+      createMovieDto,
+    //  userId,
+    );
   }
 
   @Put(':id')
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') authorization: string,
+    // @Headers('authorization') authorization: string,
     @Body() movieData: EditMoviePost,
     @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<Movie> {
-    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
+    // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     try {
-      return await this.movieService.edit(id, movieData, userId);
+      return await this.movieService.edit(
+        id,
+        movieData,
+        // userId,
+      );
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);
@@ -103,14 +110,16 @@ export class MovieController {
   @Delete(':id')
   async delete(
     @Param('id') id: number,
-    @Headers('authorization') authorization: string,
+    // @Headers('authorization') authorization: string,
+    // @Param('userId') userId: number,
     @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<{ success: boolean }> {
-    const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
-    const result = await this.movieService.delete(id, userId);
-    if (!result.success) {
-      throw new NotFoundException('Movie not found');
-    }
+    // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
+    // const result = await this.movieService.delete(id, userId);
+    const result = await this.movieService.delete(id);
+    // if (!result.success) {
+    //   throw new NotFoundException('Movie not found');
+    // }
     return result;
   }
 }
