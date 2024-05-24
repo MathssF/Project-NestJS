@@ -17,9 +17,6 @@ export class AuthService {
     console.log('Entrou no User');
     const user = await this.userService.getUserByName(username);
     console.log('User:...  ', user);
-    // if (user?.password !== password) {
-    //   throw new UnauthorizedException('Erro na validação do signIn');
-    // }
     if (!user) {
       throw new UnauthorizedException('Usuário não encontrado');
     }
