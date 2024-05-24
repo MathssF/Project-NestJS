@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 // // import { JwtStrategy } from './jwt.strategy';
 import { jwtConstants } from './constants';
+import { LocalStrategy } from './strategys/local.strategy';
 // // import { JwtInterceptor } from './jwt.interceptor';
 // import { AuthGuard } from './auth.guard';
 // import { APP_GUARD } from '@nestjs/core';
@@ -19,7 +20,7 @@ import { jwtConstants } from './constants';
       signOptions: { expiresIn: '24h' },
     }),
   ],
-  providers: [AuthService, 
+  providers: [AuthService, LocalStrategy,
     // {
     // provide: APP_GUARD,
     // useClass: AuthGuard,
