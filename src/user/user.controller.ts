@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
+import { Public } from 'src/auth/constants';
 
 @Controller('user')
 export class UserController {
@@ -16,6 +17,7 @@ export class UserController {
     // private readonly dataSource: DataSource,
   ) {}
 
+  @Public()
   @Get('userid/:id')
   async getUserByID(@Param('id') id: string): Promise<User> {
     const userId = parseInt(id, 10);
@@ -26,6 +28,7 @@ export class UserController {
     return user;
   }
 
+  @Public()
   @Get('username/:username')
   async getUserByName(@Param('username') username: string): Promise<User> {
     const user = await this.userService.getUserByName(username);
@@ -34,16 +37,4 @@ export class UserController {
     }
     return user;
   }
-
-  // @Post('register')
-  // async register(@Body() registerDto: { username: string, email: string, password: string }) {
-  //   return this.userService.createUser(registerDto.username, registerDto.email, registerDto.password);
-  // }
-  
-  // // @Public()
-  // @Post('login')
-  // async login(@Body() loginDto: { username: string, password: string }) {
-  //   console.log('Passando pelo controller ');
-  //   return this.userService.login(loginDto.username, loginDto.password);
-  // }
 }

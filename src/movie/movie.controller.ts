@@ -22,7 +22,6 @@ interface newMovie {
 }
 
 @Controller('movie')
-@UseGuards(AuthGuard)
 export class MovieController {
   constructor(
     private readonly movieService: MovieService,
