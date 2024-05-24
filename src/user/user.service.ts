@@ -11,9 +11,11 @@ export class UserService {
   ) {}
 
   async getUserByID(id: number): Promise<User | undefined> {
+    console.log('entrou no service do User, com o valor de id: ', id);
     const user = await this.userRepository.findOne({ where: {
       id: id }
     });
+    console.log('Buscou o user: ', user);
     if (!user) {
       return undefined;
     }
@@ -21,7 +23,9 @@ export class UserService {
   }
 
   async getUserByName(username: string): Promise<User | undefined> {
+    console.log('entrou no service do User, com o valor de name: ', username);
     const user = await this.userRepository.findOne({ where: { username } });
+    console.log('Buscou o user: ', user);
     if (!user) {
       return undefined;
     }
