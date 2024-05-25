@@ -7,7 +7,7 @@ import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategys/local.strategy';
 import { JwtStrategy } from './strategys/jwt.strategy';
 import { LoginValidationMiddleware } from './middlewares/login-validation.middleware';
-import { jwtConstants } from './constant/constante';
+import { jwtConstants } from './constant/constant';
 
 // Obs: Aqui irá precisar ir no /src/auth/constant/constant.example.ts
 // E mudar de constant.example.ts para constant.ts

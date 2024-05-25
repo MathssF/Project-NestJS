@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import { Public } from 'src/auth/constants';
 
 @Controller('user')
 export class UserController {
@@ -17,7 +16,6 @@ export class UserController {
     // private readonly dataSource: DataSource,
   ) {}
 
-  // @Public()
   @Get('create')
   async createNewUser(
     @Param('username') username: string,
@@ -32,7 +30,6 @@ export class UserController {
     return this.userService.create(data);
   }
 
-  // @Public()
   @Get('userid/:id')
   async getUserByID(@Param('id') id: string): Promise<User> {
     console.log('Entrou na rota de user id');
@@ -45,7 +42,6 @@ export class UserController {
     return user;
   }
 
-  // @Public()
   @Get('username/:username')
   async getUserByName(@Param('username') username: string): Promise<User> {
     console.log('Entrou na rota de username');

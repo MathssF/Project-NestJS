@@ -10,7 +10,6 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
-// import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import { User } from './user/entities/user.entity';
 import { Genre } from './movie/entities/genres.entity';
@@ -21,9 +20,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      // isGlobal: true, // torna as configurações globais
-    }),
+    ConfigModule.forRoot({}),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
