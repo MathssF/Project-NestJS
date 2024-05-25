@@ -21,12 +21,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:reset": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js schema:drop -d src/app.module.ts",
-
-
     "pull:postgres": "docker pull postgres",
     "pull:redis": "docker pull redis",
     "build:node": "docker build -t nome_imagem_node -f Dockerfile.node .",
-
     "start:docker": "docker-compose up -d --build",
     "stop:docker": "docker-compose down"
   },

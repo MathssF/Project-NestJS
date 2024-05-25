@@ -17,6 +17,7 @@ import { Movie } from './movie/entities/movies.entity';
 import { MovieGenre } from './movie/entities/movie-genre.entity';
 import { Rating } from './user/entities/rating.entity';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     UserModule,
     MovieModule,
     SeedModule,
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [
