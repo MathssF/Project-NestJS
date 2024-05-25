@@ -9,6 +9,7 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 interface MovieR extends Movie {
   rating?: number;
@@ -27,6 +28,7 @@ export class MovieController {
   ) {}
 
   @Get('genres')
+  // @UseGuards(JwtAuthGuard)
   async findAllGenres(): Promise<Genre[]> {
     console.log('Entrou no Genres');
     return this.movieService.findGenres();
