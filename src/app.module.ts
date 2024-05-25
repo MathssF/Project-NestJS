@@ -17,10 +17,6 @@ import { Movie } from './movie/entities/movies.entity';
 import { MovieGenre } from './movie/entities/movie-genre.entity';
 import { Rating } from './user/entities/rating.entity';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { CacheModule } from '@nestjs/cache-manager';
-// import { redisStore } from 'cache-manager-redis-store';
-import * as redisStore from 'cache-manager-redis-store';
-// import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -39,13 +35,6 @@ import * as redisStore from 'cache-manager-redis-store';
     UserModule,
     MovieModule,
     SeedModule,
-    CacheModule.register({
-      max: 100,
-      ttl: 3600,
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
-    }),
   ],
   controllers: [AppController],
   providers: [

@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -9,6 +14,8 @@ import { Rating } from 'src/user/entities/rating.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 import { voteResult } from './movie.interface';
+import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 
 @Injectable()
@@ -24,7 +31,19 @@ export class MovieService {
     private readonly movieGenreRepository: Repository<MovieGenre>,
     @InjectRepository(Rating)
     private readonly ratingRepository: Repository<Rating>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache, 
   ) {}
+
+
+
+  async setCacheKey(key: string, value: string): Promise<void> {
+    await this.cacheManager.set(key, value);
+  }
+
+  async getCacheKey(key: string): Promise<string> {
+    return await this.cacheManager.get(key);
+  }
+  
   async findGenres(): Promise<Genre[]> {
     const listGenres = this.genreRepository.find();
     return listGenres;
