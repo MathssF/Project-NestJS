@@ -67,12 +67,13 @@ export class MovieController {
   }
 
   @Post('vote/:id')
-  // @UseGuards(JwtAuthGuard)
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
     @Body('rating', ParseIntPipe) rating: number,
     @Request() request: any,
   ): Promise<void> {
+    console.log('Request user: ', request.user);
+    console.log('Request user id: ', request.user.sub);
     const userId = request.user.sub;
     await this.movieService.vote(userId, movieId, rating);
   }

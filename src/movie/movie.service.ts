@@ -87,15 +87,21 @@ export class MovieService {
     }
     return this.findMoviesByGenreId(genre.id);
   }
-  async vote(userId: number, movieId: number, voteValue: number): Promise<void> {
+
+
+  async vote(userId: number, movieId: number, voteValue: number): Promise<any> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
+      console.log('Sem user localizado');
       throw new NotFoundException('User not found');
     }
     if (!user.authority.vote) {
+      console.log('User não pode votar)')
       throw new ForbiddenException('User does not have permission to vote');
     }
+    console.log('User: ', user)
     if (!Number.isInteger(voteValue) || voteValue < 1 || voteValue > 5) {
+      console.log('O problema é o valor do voto');
         throw new ForbiddenException('You need chosse a value between 1 and 5')
     }
     const movie = await this.movieRepository.findOne({ where: { id: movieId } });
@@ -106,10 +112,10 @@ export class MovieService {
     let rating = await this.ratingRepository.findOne({ where: { userId, movieId } });
     if (rating) {
       rating.rating = voteValue;
-    } else {
-      rating = this.ratingRepository.create({ userId, movieId, rating: voteValue });
+      return 'Vote updated';
     }
-    await this.ratingRepository.save(rating);
+      rating = this.ratingRepository.create({ userId, movieId, rating: voteValue });
+      return 'Vote accepted';
   }
 
   async create(
