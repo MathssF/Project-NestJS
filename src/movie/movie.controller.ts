@@ -9,6 +9,7 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
+import { Rating } from 'src/user/entities/rating.entity';
 // import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 interface MovieR extends Movie {
@@ -73,8 +74,9 @@ export class MovieController {
     @Request() request: any,
   ): Promise<void> {
     console.log('Request user: ', request.user);
-    console.log('Request user id: ', request.user.sub);
-    const userId = request.user.sub;
+    console.log('Request user id: ', request.user.id);
+    const userId = request.user.id;
+    console.log('Dados: Id: ', userId, ' filme: ', movieId, ' voto: ', rating);
     await this.movieService.vote(userId, movieId, rating);
   }
 
@@ -86,7 +88,7 @@ export class MovieController {
   ): Promise<Movie> {
 
     console.log('Entrou no Create');
-    const userId = request.user.sub;
+    const userId = request.user.id;
     return await this.movieService.create(
       createMovieDto,
       userId,
@@ -101,7 +103,7 @@ export class MovieController {
   ): Promise<Movie> {
 
     console.log('Entrou no Edit');
-    const userId = request.user.sub;
+    const userId = request.user.id;
     try {
       return await this.movieService.edit(
         id,
@@ -122,11 +124,22 @@ export class MovieController {
     @Request() request: any,
   ): Promise<{ success: boolean }> {
     console.log('Entrou no Delete');
-    const userId = request.user.sub;
+    const userId = request.user.id;
     const result = await this.movieService.delete(id, userId);
     if (!result.success) {
       throw new NotFoundException('Movie not found');
     }
     return result;
+  }
+
+
+  @Get('vote/:movieId')
+  async getVotesByMovieId(@Param('movieId') movieId: number): Promise<Rating[]> {
+    return this.movieService.getVotesByMovieId(movieId);
+  }
+
+  @Get('userVote/:userId')
+  async getVotesByUserId(@Param('userId') userId: number): Promise<Rating[]> {
+    return this.movieService.getVotesByUserId(userId);
   }
 }

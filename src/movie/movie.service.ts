@@ -106,15 +106,17 @@ export class MovieService {
     }
     const movie = await this.movieRepository.findOne({ where: { id: movieId } });
     if (!movie) {
+      console.log('Não achou o filme');
       throw new NotFoundException(`Movie with ID ${movieId} not found`);
     }
 
-    let rating = await this.ratingRepository.findOne({ where: { userId, movieId } });
-    if (rating) {
-      rating.rating = voteValue;
+    let search = await this.ratingRepository.findOne({ where: { userId, movieId } });
+    if (search) {
+      console.log('Voto alterado para: ', search.rating);
+      search.rating = voteValue;
       return 'Vote updated';
     }
-      rating = this.ratingRepository.create({ userId, movieId, rating: voteValue });
+      const result = this.ratingRepository.create({ userId, movieId, rating: voteValue });
       return 'Vote accepted';
   }
 
@@ -252,5 +254,23 @@ export class MovieService {
     }
     await this.movieRepository.remove(movie);
     return { success: true };
+  }
+
+
+
+  async getVotesByMovieId(movieId: number): Promise<Rating[]> {
+    const votes = await this.ratingRepository.find({ where: { movieId } });
+    if (!votes || votes.length === 0) {
+      throw new NotFoundException(`No votes found for movie with ID ${movieId}`);
+    }
+    return votes;
+  }
+
+  async getVotesByUserId(userId: number): Promise<Rating[]> {
+    const votes = await this.ratingRepository.find({ where: { userId } });
+    if (!votes || votes.length === 0) {
+      throw new NotFoundException(`No votes found for user with ID ${userId}`);
+    }
+    return votes;
   }
 }
