@@ -1,8 +1,7 @@
 import {
   Controller, Get, Post, Body, Param,
-  Delete, UseGuards, ParseIntPipe, Put,
-  NotFoundException, UnauthorizedException,
-  Headers, Request,
+  Delete, ParseIntPipe, Put, Request,
+  NotFoundException,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
@@ -10,22 +9,13 @@ import { EditMoviePost } from './dto/update-movie.dto';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
 import { Rating } from 'src/user/entities/rating.entity';
-// import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-
-interface MovieR extends Movie {
-  rating?: number;
-}
-
-interface newMovie {
-  userId: number;
-  CreateMovieDto: CreateMovieDto;
-}
+import { MovieR } from './movie.interface';
+import { voteResult } from './movie.interface';
 
 @Controller('movie')
 export class MovieController {
   constructor(
     private readonly movieService: MovieService,
-    // private readonly authService: AuthService,
   ) {}
 
   @Get('genres')
@@ -41,13 +31,13 @@ export class MovieController {
     return genres.map(genre => genre.name);
   }
 
-  @Get('movies')
+  @Get('list')
   findAll(): Promise<Movie[]> {
     console.log('Entrou no Movies');
     return this.movieService.findAllMovies();
   }
 
-  @Get('movie-by-id/:id')
+  @Get('by-id/:id')
   findOne(@Param('id') id: string): Promise<MovieR> {
     console.log('Entrou no Movie de algum id');
     return this.movieService.findMovieById(+id);
@@ -55,13 +45,13 @@ export class MovieController {
 
   // Agora filtrar filmes por genero:
 
-  @Get('movie-by-genre/:id')
+  @Get('by-genre/:id')
   async findMoviesByGenreId(@Param('id') id: number): Promise<Movie[]> {
     console.log('Entrou nos movies de algum genero');
     return this.movieService.findMoviesByGenreId(id);
   }
 
-  @Get('movie-by-genre-name/:name')
+  @Get('by-genre-name/:name')
   async findMoviesByGenreName(@Param('name') name: string): Promise<Movie[]> {
     console.log('Entrou nos movies de algum genero pelo nome');
     return this.movieService.findMoviesByGenreName(name);
@@ -72,12 +62,10 @@ export class MovieController {
     @Param('id', ParseIntPipe) movieId: number,
     @Body('rating', ParseIntPipe) rating: number,
     @Request() request: any,
-  ): Promise<void> {
-    console.log('Request user: ', request.user);
-    console.log('Request user id: ', request.user.id);
+  ): Promise<voteResult> {
     const userId = request.user.id;
-    console.log('Dados: Id: ', userId, ' filme: ', movieId, ' voto: ', rating);
-    await this.movieService.vote(userId, movieId, rating);
+    const result = await this.movieService.vote(userId, movieId, rating);
+    return result;
   }
 
 

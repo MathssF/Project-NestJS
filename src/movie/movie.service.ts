@@ -8,10 +8,7 @@ import { MovieGenre } from './entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
-
-interface MovieR extends Movie {
-  rating?: number;
-}
+import { voteResult } from './movie.interface';
 
 
 @Injectable()
@@ -89,41 +86,31 @@ export class MovieService {
   }
 
 
-  async vote(userId: number, movieId: number, voteValue: number): Promise<any> {
-    console.log('Entrou no VoteService!!!!!');
+  async vote(userId: number, movieId: number, voteValue: number): Promise<voteResult> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      console.log('Sem user localizado');
       throw new NotFoundException('User not found');
     }
-    console.log('Passou do primeiro IF');
     if (!user.authority.vote) {
-      console.log('User não pode votar)')
       throw new ForbiddenException('User does not have permission to vote');
     }
-    console.log('Passou do segundo IF: ');
     if (!Number.isInteger(voteValue) || voteValue < 1 || voteValue > 5) {
-      console.log('O problema é o valor do voto');
         throw new ForbiddenException('You need chosse a value between 1 and 5')
     }
-    console.log('Passou do terceiro IF, indo conferir o filme');
     const movie = await this.movieRepository.findOne({ where: { id: movieId } });
     if (!movie) {
-      console.log('Não achou o filme');
       throw new NotFoundException(`Movie with ID ${movieId} not found`);
     }
-    console.log('Passou do quarto IF');
     let search = await this.ratingRepository.findOne({ where: { userId, movieId } });
     if (search) {
-      console.log('Voto alterado de: ', search.rating, ' para: ', voteValue);
+      const previou = search.rating;
       search.rating = voteValue;
       await this.ratingRepository.save(search);
-      return { msg: 'Vote updated', vote: voteValue };
+      return { msg: 'Vote updated', username: user.username, moviename: movie.name, vote: voteValue, previousVote: previou};
     }
-      console.log('Não, não tinha voto salvo');
       const result = this.ratingRepository.create({ userId, movieId, rating: voteValue });
       await this.ratingRepository.save(result);
-      return { msg: 'Vote accepted', vote: voteValue };
+      return { msg: 'Vote accepted', username: user.username, moviename: movie.name, vote: voteValue };
   }
 
   async create(
