@@ -9,7 +9,7 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+// import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 interface MovieR extends Movie {
   rating?: number;
@@ -28,7 +28,6 @@ export class MovieController {
   ) {}
 
   @Get('genres')
-  // @UseGuards(JwtAuthGuard)
   async findAllGenres(): Promise<Genre[]> {
     console.log('Entrou no Genres');
     return this.movieService.findGenres();
@@ -67,47 +66,46 @@ export class MovieController {
     return this.movieService.findMoviesByGenreName(name);
   }
 
-  // @Post('vote/:id')
-  // async voteMovie(
-  //   @Param('id', ParseIntPipe) movieId: number,
-  //   @Headers('authorization') authorization: string,
-  //   @Body('rating', ParseIntPipe) rating: number,
-  //   @Request() request // Adicione a injeção de dependência para acessar o userId
-  // ): Promise<void> {
-  //   const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
-  //   await this.movieService.vote(userId, movieId, rating);
-  // }
+  @Post('vote/:id')
+  // @UseGuards(JwtAuthGuard)
+  async voteMovie(
+    @Param('id', ParseIntPipe) movieId: number,
+    @Body('rating', ParseIntPipe) rating: number,
+    @Request() request: any,
+  ): Promise<void> {
+    const userId = request.user.sub;
+    await this.movieService.vote(userId, movieId, rating);
+  }
+
 
   @Post()
   async create(
-    // @Headers('authorization') authorization: string,
     @Body() createMovieDto: CreateMovieDto,
-    @Request() request // Adicione a injeção de dependência para acessar o userId
+    @Request() request: any,
   ): Promise<Movie> {
 
     console.log('Entrou no Create');
-    // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
+    const userId = request.user.sub;
     return await this.movieService.create(
       createMovieDto,
-    //  userId,
+      userId,
     );
   }
 
   @Put(':id')
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
-    // @Headers('authorization') authorization: string,
     @Body() movieData: EditMoviePost,
-    @Request() request // Adicione a injeção de dependência para acessar o userId
+    @Request() request: any,
   ): Promise<Movie> {
 
     console.log('Entrou no Edit');
-    // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
+    const userId = request.user.sub;
     try {
       return await this.movieService.edit(
         id,
         movieData,
-        // userId,
+        userId,
       );
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -120,17 +118,14 @@ export class MovieController {
   @Delete(':id')
   async delete(
     @Param('id') id: number,
-    // @Headers('authorization') authorization: string,
-    // @Param('userId') userId: number,
-    @Request() request // Adicione a injeção de dependência para acessar o userId
+    @Request() request: any,
   ): Promise<{ success: boolean }> {
     console.log('Entrou no Delete');
-    // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
-    // const result = await this.movieService.delete(id, userId);
-    const result = await this.movieService.delete(id);
-    // if (!result.success) {
-    //   throw new NotFoundException('Movie not found');
-    // }
+    const userId = request.user.sub;
+    const result = await this.movieService.delete(id, userId);
+    if (!result.success) {
+      throw new NotFoundException('Movie not found');
+    }
     return result;
   }
 }

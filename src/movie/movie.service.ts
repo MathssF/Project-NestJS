@@ -87,34 +87,34 @@ export class MovieService {
     }
     return this.findMoviesByGenreId(genre.id);
   }
-  // async vote(userId: number, movieId: number, voteValue: number): Promise<void> {
-  //   const user = await this.userRepository.findOne({ where: { id: userId } });
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-  //   if (!user.authority.vote) {
-  //     throw new ForbiddenException('User does not have permission to vote');
-  //   }
-  //   if (!Number.isInteger(voteValue) || voteValue < 1 || voteValue > 5) {
-  //       throw new ForbiddenException('You need chosse a value between 1 and 5')
-  //   }
-  //   const movie = await this.movieRepository.findOne({ where: { id: movieId } });
-  //   if (!movie) {
-  //     throw new NotFoundException(`Movie with ID ${movieId} not found`);
-  //   }
+  async vote(userId: number, movieId: number, voteValue: number): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.authority.vote) {
+      throw new ForbiddenException('User does not have permission to vote');
+    }
+    if (!Number.isInteger(voteValue) || voteValue < 1 || voteValue > 5) {
+        throw new ForbiddenException('You need chosse a value between 1 and 5')
+    }
+    const movie = await this.movieRepository.findOne({ where: { id: movieId } });
+    if (!movie) {
+      throw new NotFoundException(`Movie with ID ${movieId} not found`);
+    }
 
-  //   let rating = await this.ratingRepository.findOne({ where: { userId, movieId } });
-  //   if (rating) {
-  //     rating.rating = voteValue;
-  //   } else {
-  //     rating = this.ratingRepository.create({ userId, movieId, rating: voteValue });
-  //   }
-  //   await this.ratingRepository.save(rating);
-  // }
+    let rating = await this.ratingRepository.findOne({ where: { userId, movieId } });
+    if (rating) {
+      rating.rating = voteValue;
+    } else {
+      rating = this.ratingRepository.create({ userId, movieId, rating: voteValue });
+    }
+    await this.ratingRepository.save(rating);
+  }
 
   async create(
     movieData: CreateMovieDto,
-    // userId: number,
+    userId: number,
   ): Promise<Movie> {
     if (movieData.id) {
       const existingMovie = await this.movieRepository.findOne({
@@ -125,13 +125,13 @@ export class MovieService {
       }
     }
 
-    // const user = await this.userRepository.findOne({ where: { id: userId } });
-    // if (!user) {
-    //   throw new NotFoundException('User not found');
-    // }
-    // if (!user.authority.add) {
-    //   throw new ForbiddenException('User does not have permission to create new');
-    // }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.authority.add) {
+      throw new ForbiddenException('User does not have permission to create new');
+    }
     const movie = this.movieRepository.create({
       name: movieData.name,
       description: movieData.description,
@@ -165,20 +165,20 @@ export class MovieService {
   async edit(
     id: number,
     movieData: EditMoviePost,
-    // userId: number
+    userId: number
   ): Promise<Movie> {
     const movie = await this.movieRepository.findOne({ where: { id: id } });
     if (!movie) {
       throw new NotFoundException('Movie not found');
     }
 
-    // const user = await this.userRepository.findOne({ where: { id: userId } });
-    // if (!user) {
-    //   throw new NotFoundException('User not found');
-    // }
-    // if (!user.authority.edit) {
-    //   throw new ForbiddenException('User does not have permission to Edit');
-    // }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.authority.edit) {
+      throw new ForbiddenException('User does not have permission to Edit');
+    }
   
     if (movieData.name) {
       movie.name = movieData.name;
@@ -231,19 +231,19 @@ export class MovieService {
 
   async delete(
     id: number,
-    // userId: number,
+    userId: number,
   ): Promise<{ success: boolean }> {
     const movie = await this.movieRepository.findOne({ where: { id: id } });
     if (!movie) {
       throw new NotFoundException('Movie not found');
     }
-    // const user = await this.userRepository.findOne({ where: { id: userId } });
-    // if (!user) {
-    //   throw new NotFoundException('User not found');
-    // }
-    // if (!user.authority.del) {
-    //   throw new ForbiddenException('User does not have permission to Delete');
-    // }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.authority.del) {
+      throw new ForbiddenException('User does not have permission to Delete');
+    }
     await this.movieRepository.remove(movie);
     return { success: true };
   }
