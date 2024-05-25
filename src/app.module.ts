@@ -35,7 +35,9 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
       synchronize: true,
     }),
     AuthModule,
-    UserModule, MovieModule, SeedModule,
+    UserModule,
+    MovieModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [
