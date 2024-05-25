@@ -5,16 +5,16 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST: ${DB_HOST}
-      - DB_PORT: ${DB_PORT}
-      - DB_USERNAME: ${DB_USERNAME}
-      - DB_PASSWORD: ${DB_PASSWORD}
-      - DB_NAME: ${DB_NAME}
-      - REDIS_HOST: ${REDIS_HOST}
-      - REDIS_PORT: ${REDIS_PORT}
-      - PORT: ${PORT}
-      - JWT_SECRET: ${JWT_SECRET}
-      - JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=Developer
+      - DB_PASSWORD=123456
+      - DB_NAME=MKSdatabase
+      - REDIS_HOST=redishost
+      - REDIS_PORT=6379
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
     depends_on:
       - db
   db:
@@ -22,5 +22,5 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: your_postgres_password_here # Defina a senha do banco de dados Postgres
+      POSTGRES_PASSWORD: ${process.env.DB_PASSWORD}
       POSTGRES_DB: MKSdatabase
