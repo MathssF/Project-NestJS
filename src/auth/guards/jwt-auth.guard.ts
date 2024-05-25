@@ -1,4 +1,3 @@
-// NestJS
 import {
     ExecutionContext,
     Injectable,
@@ -25,12 +24,14 @@ import {
       ]);
   
       if (isPublic) {
+        console.log('O JWT reconheceu que a rota é pública');
         return true;
       }
   
       const canActivate = super.canActivate(context);
   
       if (typeof canActivate === 'boolean') {
+        console.log('Reconheceu a ativação');
         return canActivate;
       }
   

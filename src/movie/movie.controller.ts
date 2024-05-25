@@ -7,10 +7,8 @@ import {
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { EditMoviePost } from './dto/update-movie.dto';
-// import { AuthGuard } from 'src/auth/auth.guard';
 import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
-// import { AuthService } from 'src/auth/auth.service';
 
 interface MovieR extends Movie {
   rating?: number;
@@ -30,22 +28,26 @@ export class MovieController {
 
   @Get('genres')
   async findAllGenres(): Promise<Genre[]> {
+    console.log('Entrou no Genres');
     return this.movieService.findGenres();
   }
 
   @Get('genres-names')
   async findAllGenreNames(): Promise<string[]> {
+    console.log('Entrou no Genres Name');
     const genres = await this.movieService.findGenres();
     return genres.map(genre => genre.name);
   }
 
   @Get('movies')
   findAll(): Promise<Movie[]> {
+    console.log('Entrou no Movies');
     return this.movieService.findAllMovies();
   }
 
   @Get('movie-by-id/:id')
   findOne(@Param('id') id: string): Promise<MovieR> {
+    console.log('Entrou no Movie de algum id');
     return this.movieService.findMovieById(+id);
   }
 
@@ -53,11 +55,13 @@ export class MovieController {
 
   @Get('movie-by-genre/:id')
   async findMoviesByGenreId(@Param('id') id: number): Promise<Movie[]> {
+    console.log('Entrou nos movies de algum genero');
     return this.movieService.findMoviesByGenreId(id);
   }
 
   @Get('movie-by-genre-name/:name')
   async findMoviesByGenreName(@Param('name') name: string): Promise<Movie[]> {
+    console.log('Entrou nos movies de algum genero pelo nome');
     return this.movieService.findMoviesByGenreName(name);
   }
 
@@ -78,6 +82,8 @@ export class MovieController {
     @Body() createMovieDto: CreateMovieDto,
     @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<Movie> {
+
+    console.log('Entrou no Create');
     // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     return await this.movieService.create(
       createMovieDto,
@@ -92,6 +98,8 @@ export class MovieController {
     @Body() movieData: EditMoviePost,
     @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<Movie> {
+
+    console.log('Entrou no Edit');
     // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     try {
       return await this.movieService.edit(
@@ -114,6 +122,7 @@ export class MovieController {
     // @Param('userId') userId: number,
     @Request() request // Adicione a injeção de dependência para acessar o userId
   ): Promise<{ success: boolean }> {
+    console.log('Entrou no Delete');
     // const userId = request.user.sub; // Obtenha o userId do objeto de solicitação
     // const result = await this.movieService.delete(id, userId);
     const result = await this.movieService.delete(id);
