@@ -21,6 +21,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   async login(@Request() req: AuthRequest) {
     console.log('Entrou no auth/login');
+    console.log('Req: ', req.user);
     return this.authService.login(req.user);
   }
 
