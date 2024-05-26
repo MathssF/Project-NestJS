@@ -18,6 +18,11 @@ export class MovieController {
     private readonly movieService: MovieService,
   ) {}
 
+  @Get('Cache/:key')
+  async getCache(@Param('key') key: any) {
+    return this.movieService.getCacheKey(key);
+  }
+
   @Get('genres')
   async findAllGenres(): Promise<Genre[]> {
     console.log('Entrou no Genres');
@@ -26,20 +31,17 @@ export class MovieController {
 
   @Get('genres-names')
   async findAllGenreNames(): Promise<string[]> {
-    console.log('Entrou no Genres Name');
     const genres = await this.movieService.findGenres();
     return genres.map(genre => genre.name);
   }
 
   @Get('list')
   findAll(): Promise<Movie[]> {
-    console.log('Entrou no Movies');
     return this.movieService.findAllMovies();
   }
 
   @Get('by-id/:id')
   findOne(@Param('id') id: string): Promise<MovieR> {
-    console.log('Entrou no Movie de algum id');
     return this.movieService.findMovieById(+id);
   }
 
@@ -47,13 +49,11 @@ export class MovieController {
 
   @Get('by-genre/:id')
   async findMoviesByGenreId(@Param('id') id: number): Promise<Movie[]> {
-    console.log('Entrou nos movies de algum genero');
     return this.movieService.findMoviesByGenreId(id);
   }
 
   @Get('by-genre-name/:name')
   async findMoviesByGenreName(@Param('name') name: string): Promise<Movie[]> {
-    console.log('Entrou nos movies de algum genero pelo nome');
     return this.movieService.findMoviesByGenreName(name);
   }
 
@@ -129,5 +129,13 @@ export class MovieController {
   @Get('userVote/:userId')
   async getVotesByUserId(@Param('userId') userId: number): Promise<Rating[]> {
     return this.movieService.getVotesByUserId(userId);
+  }
+
+
+
+  @Get('/clear')
+  clearCache(): string {
+    this.movieService.clearCache();
+    return 'Cache limpo com sucesso';
   }
 }

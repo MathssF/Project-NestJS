@@ -48,7 +48,12 @@ export class MovieService {
     const cacheKey = 'genresList';
     let listGenres = await this.cacheManager.get<Genre[]>(cacheKey);
 
+    if(listGenres) {
+      console.log('Buscou do Cache');
+    }
+
     if(!listGenres) { 
+      console.log('Não Buscou do Cache');
       listGenres = await this.genreRepository.find();
       await this.cacheManager.set(cacheKey, listGenres);
     }
@@ -72,6 +77,7 @@ export class MovieService {
     let movies = await this.cacheManager.get<Movie[]>(cacheKey);
 
     if (!movies) {
+      console.log('Não buscou do Cache');
       movies = await this.movieRepository.find();
       await this.cacheManager.set(cacheKey, movies);
     }
@@ -361,5 +367,10 @@ export class MovieService {
       throw new NotFoundException(`No votes found for user with ID ${userId}`);
     }
     return votes;
+  }
+
+
+  clearCache(): void {
+    this.cacheManager.reset(); // Limpa todo o cache
   }
 }
