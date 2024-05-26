@@ -9,11 +9,9 @@ async function bootstrap() {
     .setTitle('Movies Database')
     .setDescription('Uma API que passa informação sobre uma lista de filmes usando o JWT')
     .setVersion('1.0')
-    .addTag('Movies')
-    .addTag('Database. postgres')
-    .addTag('NestJG')
-    .addTag('JWT')
-    .addTag('MKS')
+    .addTag('Users')
+    .addTag('Auth')
+    .addTag('Movie')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
