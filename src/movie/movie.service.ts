@@ -60,7 +60,7 @@ export class MovieService {
     let genreNames = await this.cacheManager.get<string[]>(cacheKey);
     if (!genreNames) {
       const genres = await this.genreRepository.find();
-      const genreNames = genres.map(genre => genre.name);
+      genreNames = genres.map(genre => genre.name);
       await this.cacheManager.set(cacheKey, genreNames);
 
     }
