@@ -12,6 +12,7 @@ import { Rating } from 'src/user/entities/rating.entity';
 import { MovieR } from './movie.interface';
 import { voteResult } from './movie.interface';
 import { ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { VoteMovieDto } from './dto/vote-movie.dto';
 
 @ApiTags('Movie')
 @Controller('movie')
@@ -59,11 +60,12 @@ export class MovieController {
   @ApiNotFoundResponse({ description: 'Movie or User not found' })
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
-    @Body('rating', ParseIntPipe) rating: number,
+    // @Body('rating', ParseIntPipe) rating: number,
+    @Body() voteMovieDto: VoteMovieDto,
     @Request() request: any,
   ): Promise<voteResult> {
     const userId = request.user.id;
-    const result = await this.movieService.vote(userId, movieId, rating);
+    const result = await this.movieService.vote(userId, movieId, voteMovieDto.rating);
     return result;
   }
 
