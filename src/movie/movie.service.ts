@@ -45,64 +45,113 @@ export class MovieService {
   }
   
   async findGenres(): Promise<Genre[]> {
-    const listGenres = this.genreRepository.find();
+    const cacheKey = 'genresList';
+    let listGenres = await this.cacheManager.get<Genre[]>(cacheKey);
+
+    if(!listGenres) { 
+      listGenres = await this.genreRepository.find();
+      await this.cacheManager.set(cacheKey, listGenres);
+    }
     return listGenres;
   }
 
   async findGenresName(): Promise<string[]> {
-    const genres = await this.genreRepository.find();
-    const listNames = genres.map(genre => genre.name);
-    return listNames;
+    const cacheKey = 'genreNames';
+    let genreNames = await this.cacheManager.get<string[]>(cacheKey);
+    if (!genreNames) {
+      const genres = await this.genreRepository.find();
+      const genreNames = genres.map(genre => genre.name);
+      await this.cacheManager.set(cacheKey, genreNames);
+
+    }
+    return genreNames;
   }
  
   async findAllMovies(): Promise<Movie[]> {
-    const listMovies = this.movieRepository.find();
-    return listMovies;
+    const cacheKey = 'allMovies';
+    let movies = await this.cacheManager.get<Movie[]>(cacheKey);
+
+    if (!movies) {
+      movies = await this.movieRepository.find();
+      await this.cacheManager.set(cacheKey, movies);
+    }
+
+    return movies;
+
   }
+
+
 
   async findMovieById(id: number): Promise<any> {
-    const movie = this.movieRepository.findOne({
-        where: {
-            id: id,
-        }
-    });
+    const cacheKey = `movie_${id}`;
+    let movie = await this.cacheManager.get<any>(cacheKey);
+
     if (!movie) {
+      movie = await this.movieRepository.findOne({
+        where: { id: id },
+      });
+      if (!movie) {
         throw new NotFoundException(`Movie with ID ${id} not found`);
       }
-    const ratings = await this.ratingRepository.find({
-      where: { movieId: id },
-    });
-    if (ratings.length === 0) {
-      return movie;
+      const ratings = await this.ratingRepository.find({
+        where: { movieId: id },
+      });
+      if (ratings.length === 0) {
+        await this.cacheManager.set(cacheKey, movie);
+        return movie;
+      }
+      const votesArray = ratings.map(rating => rating.rating);
+      const averageRating = votesArray.length
+        ? (votesArray.reduce((a, b) => a + b, 0) / votesArray.length).toFixed(1)
+        : null;
+      movie = { ...movie, rating: averageRating };
+      await this.cacheManager.set(cacheKey, movie);
     }
-    const votesArray = ratings.map(rating => rating.rating); // Supondo que a coluna de valor de avaliação é 'value'
-    const averageRating = votesArray.length
-      ? (votesArray.reduce((a, b) => a + b, 0) / votesArray.length).toFixed(1)
-      : null;
-    const movieWithRating = { ...movie, rating: averageRating };
-    return movieWithRating;
+
+    return movie;
   }
+
+
 
   async findMoviesByGenreId(genreId: number): Promise<Movie[]> {
-    const movieGenres = await this.movieGenreRepository.find({
-        where: { genre: { id: genreId } }, relations: ['movie'],
-    });
-    const movieIds = movieGenres.map(movieGenre => movieGenre.movie.id);
+    const cacheKey = `moviesByGenreId_${genreId}`;
+    let movies = await this.cacheManager.get<Movie[]>(cacheKey);
 
-    if (movieIds.length === 0) {
-      return [];
+    if (!movies) {
+      const movieGenres = await this.movieGenreRepository.find({
+        where: { genre: { id: genreId } }, relations: ['movie'],
+      });
+      const movieIds = movieGenres.map(movieGenre => movieGenre.movie.id);
+
+      if (movieIds.length === 0) {
+        return [];
+      }
+      movies = await this.movieRepository.findByIds(movieIds);
+      await this.cacheManager.set(cacheKey, movies);
     }
-    const listMovies = this.movieRepository.findByIds(movieIds);
-    return listMovies;
+
+    return movies;
   }
+
+
 
   async findMoviesByGenreName(genreName: string): Promise<Movie[]> {
-    const genre = await this.genreRepository.findOne({ where: { name: genreName } });
-    if (!genre) {
+    const cacheKey = `moviesByGenreName_${genreName}`;
+    let movies = await this.cacheManager.get<Movie[]>(cacheKey);
+
+    if (!movies) {
+      const genre = await this.genreRepository.findOne({ where: { name: genreName } });
+      if (!genre) {
         return [];
+      }
+      movies = await this.findMoviesByGenreId(genre.id);
+      await this.cacheManager.set(cacheKey, movies);
     }
-    return this.findMoviesByGenreId(genre.id);
+
+    return movies;
   }
+
+  // Abaixo, Vote, Crate, Edit e Delete
 
 
   async vote(userId: number, movieId: number, voteValue: number): Promise<voteResult> {
@@ -125,12 +174,16 @@ export class MovieService {
       const previou = search.rating;
       search.rating = voteValue;
       await this.ratingRepository.save(search);
+      await this.cacheManager.del(`movie_${movieId}`);
       return { msg: 'Vote updated', username: user.username, moviename: movie.name, vote: voteValue, previousVote: previou};
     }
       const result = this.ratingRepository.create({ userId, movieId, rating: voteValue });
       await this.ratingRepository.save(result);
+      await this.cacheManager.del(`movie_${movieId}`);
       return { msg: 'Vote accepted', username: user.username, moviename: movie.name, vote: voteValue };
   }
+
+
 
   async create(
     movieData: CreateMovieDto,
@@ -160,6 +213,7 @@ export class MovieService {
     });
   
     const savedMovie = await this.movieRepository.save(movie);
+    await this.cacheManager.del('allMovies');
   
     if (movieData.genres && movieData.genres.length > 0) {
       for (const genreId of movieData.genres) {
@@ -175,12 +229,15 @@ export class MovieService {
           movie: savedMovie,
           genre: genre,
         });
+        await this.cacheManager.del(`moviesByGenreId_${genreId}`);
+        await this.cacheManager.del(`moviesByGenreName_${genre.name}`);
       }
     }
   
     return savedMovie;
   }
   
+
 
   async edit(
     id: number,
@@ -220,6 +277,8 @@ export class MovieService {
           throw new NotFoundException(`Genre with ID ${genreId} not found`);
         }
         await this.movieGenreRepository.save({ movie, genre });
+        await this.cacheManager.del(`moviesByGenreId_${genreId}`);
+        await this.cacheManager.del(`moviesByGenreName_${genre.name}`);
       }
     } else {
       if (movieData.addGenres) {
@@ -231,6 +290,8 @@ export class MovieService {
           const existingRelation = await this.movieGenreRepository.findOne({ where: { movie: { id: movie.id }, genre: { id: genre.id } } });
           if (!existingRelation) {
             await this.movieGenreRepository.save({ movie, genre });
+            await this.cacheManager.del(`moviesByGenreId_${genreId}`);
+            await this.cacheManager.del(`moviesByGenreName_${genre.name}`);
           }
         }
       }
@@ -242,12 +303,19 @@ export class MovieService {
             throw new NotFoundException(`Genre with ID ${genreId} not found`);
           }
           await this.movieGenreRepository.delete({ movie: { id: movie.id }, genre: { id: genre.id } });
+          await this.cacheManager.del(`moviesByGenreId_${genreId}`);
+          await this.cacheManager.del(`moviesByGenreName_${genre.name}`);
         }
       }
     }
   
+    await this.cacheManager.del(`movie_${id}`);
+    await this.cacheManager.del('allMovies');
+
     return movie;
   }
+
+
 
   async delete(
     id: number,
@@ -265,6 +333,15 @@ export class MovieService {
       throw new ForbiddenException('User does not have permission to Delete');
     }
     await this.movieRepository.remove(movie);
+    await this.cacheManager.del(`movie_${id}`);
+    await this.cacheManager.del('allMovies');
+
+    const movieGenres = await this.movieGenreRepository.find({ where: { movie: { id: id } } });
+    for (const movieGenre of movieGenres) {
+      await this.cacheManager.del(`moviesByGenreId_${movieGenre.genre.id}`);
+      await this.cacheManager.del(`moviesByGenreName_${movieGenre.genre.name}`);
+    }
+
     return { success: true };
   }
 

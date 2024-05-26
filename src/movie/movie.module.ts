@@ -8,18 +8,21 @@ import { Movie } from './entities/movies.entity';
 import { MovieGenre } from './entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
+import { RedisClientOptions } from 'redis';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     User, Genre, Movie, MovieGenre, Rating,
   ]),
-  CacheModule.register({
-    // store: redisStore,
+  CacheModule.register<RedisClientOptions>({
+    store: redisStore,
     max: 100,
     ttl: 3600,
-    host: 'localhost',
-    port: 6379,
+    socket: {
+      host: 'localhost',
+      port: 6379,
+    }
   }),
   ],
   controllers: [MovieController],
