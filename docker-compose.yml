@@ -25,5 +25,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: MKSdatabase
   redis:
-    image: redis:alpine
-    restart: always
+    container_name: redis-cache
+    image: redis
+    environment:
+     -  REDIS_USER=redis
+     -  REDIS_PASSWORD=redis
+     -  REDIS_DB=projeto
+    ports:
+      - "6379:6379"  
