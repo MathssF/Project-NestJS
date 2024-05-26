@@ -27,7 +27,7 @@ export class EditMoviePost {
   @IsArray()
   @IsNumber({}, { each: true })
   @ApiProperty({ 
-    description: `Este Array é Adicional, serve para alterar completamente a lista de generos /n
+    description: `Este Array é Adicional, serve para alterar completamente a lista de generos. 
     (Obs: Caso ele seja preenchido, os dois arrays de baixo não irão ser lidos mesmo se tiverem algo)`,
     required: false })
   listGenres?: number[];
