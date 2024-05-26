@@ -1,7 +1,4 @@
-import {
-  Module,
-  NestModule,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MovieModule } from './movie/movie.module';
 import { SeedModule } from './seed/seed.module';
-import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { User } from './user/entities/user.entity';
 import { Genre } from './movie/entities/genres.entity';
 import { Movie } from './movie/entities/movies.entity';
@@ -45,22 +42,4 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     },
   ],
 })
-export class AppModule implements NestModule {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
-
-  configure() {
-    // const app = this.httpAdapterHost.httpAdapter.getInstance();
-    // const config = new DocumentBuilder()
-    //   .setTitle('Movies Database')
-    //   .setDescription('Uma API que passa informação sobre uma lista de filmes usando o JWT')
-    //   .setVersion('1.0')
-    //   .addTag('Movies')
-    //   .addTag('Database. postgres')
-    //   .addTag('NestJG')
-    //   .addTag('JWT')
-    //   .addTag('MKS')
-    //   .build();
-    // const document = SwaggerModule.createDocument(app, config);
-    // SwaggerModule.setup('api', app, document);
-  }
-}
+export class AppModule {}
