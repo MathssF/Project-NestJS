@@ -1,12 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
 import { SeedService } from './seed.service';
-import { catchError } from 'rxjs';
+import { ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @Controller('seed')
 export class SeedController {
 
   constructor(private readonly seedService: SeedService) {}
   @Get()
+  @ApiExcludeEndpoint()
   async seed(): Promise<string> {
     try {
       await this.seedService.seed();

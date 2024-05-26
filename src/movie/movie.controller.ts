@@ -11,7 +11,7 @@ import { Movie } from './entities/movies.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { MovieR } from './movie.interface';
 import { voteResult } from './movie.interface';
-import { ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiExcludeEndpoint, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { VoteMovieDto } from './dto/vote-movie.dto';
 
 @ApiTags('Movie')
@@ -77,8 +77,6 @@ export class MovieController {
     @Body() createMovieDto: CreateMovieDto,
     @Request() request: any,
   ): Promise<Movie> {
-
-    console.log('Entrou no Create');
     const userId = request.user.id;
     return await this.movieService.create(
       createMovieDto,
@@ -95,8 +93,6 @@ export class MovieController {
     @Body() movieData: EditMoviePost,
     @Request() request: any,
   ): Promise<Movie> {
-
-    console.log('Entrou no Edit');
     const userId = request.user.id;
     try {
       return await this.movieService.edit(
@@ -138,6 +134,7 @@ export class MovieController {
   }
 
   @Get('Cache/:key')
+  @ApiExcludeEndpoint()
   async getCache(@Param('key') key: any) {
     return this.movieService.getCacheKey(key);
   }
