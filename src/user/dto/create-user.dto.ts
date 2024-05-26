@@ -24,21 +24,4 @@ export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
-
-//   @IsObject()
-//   @IsNotEmpty()
-//   authority: {
-    
-//     @IsBoolean()
-//     vote: boolean;
-
-//     @IsBoolean()
-//     edit: boolean;
-
-//     @IsBoolean()
-//     add: boolean;
-
-//     @IsBoolean()
-//     del: boolean;
-//   };
 }

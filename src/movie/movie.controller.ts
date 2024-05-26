@@ -11,7 +11,9 @@ import { Movie } from './entities/movies.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { MovieR } from './movie.interface';
 import { voteResult } from './movie.interface';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Movie')
 @Controller('movie')
 export class MovieController {
   constructor(
