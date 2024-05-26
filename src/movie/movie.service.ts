@@ -17,7 +17,6 @@ import { voteResult } from './movie.interface';
 import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 
-
 @Injectable()
 export class MovieService {
   constructor(
@@ -34,26 +33,11 @@ export class MovieService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache, 
   ) {}
 
-
-
-  async setCacheKey(key: string, value: string): Promise<void> {
-    await this.cacheManager.set(key, value);
-  }
-
-  async getCacheKey(key: string): Promise<string> {
-    return await this.cacheManager.get(key);
-  }
-  
   async findGenres(): Promise<Genre[]> {
     const cacheKey = 'genresList';
     let listGenres = await this.cacheManager.get<Genre[]>(cacheKey);
 
-    if(listGenres) {
-      console.log('Buscou do Cache');
-    }
-
-    if(!listGenres) { 
-      console.log('Não Buscou do Cache');
+    if(!listGenres) {
       listGenres = await this.genreRepository.find();
       await this.cacheManager.set(cacheKey, listGenres);
     }
@@ -77,7 +61,6 @@ export class MovieService {
     let movies = await this.cacheManager.get<Movie[]>(cacheKey);
 
     if (!movies) {
-      console.log('Não buscou do Cache');
       movies = await this.movieRepository.find();
       await this.cacheManager.set(cacheKey, movies);
     }
@@ -369,6 +352,13 @@ export class MovieService {
     return votes;
   }
 
+  async setCacheKey(key: string, value: string): Promise<void> {
+    await this.cacheManager.set(key, value);
+  }
+
+  async getCacheKey(key: string): Promise<string> {
+    return await this.cacheManager.get(key);
+  }
 
   clearCache(): void {
     this.cacheManager.reset(); // Limpa todo o cache

@@ -18,7 +18,7 @@ import { RedisClientOptions } from 'redis';
   CacheModule.register<RedisClientOptions>({
     store: redisStore,
     max: 100,
-    ttl: 3600,
+    ttl: 3600000,
     socket: {
       host: 'localhost',
       port: 6379,

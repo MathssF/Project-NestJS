@@ -18,14 +18,8 @@ export class MovieController {
     private readonly movieService: MovieService,
   ) {}
 
-  @Get('Cache/:key')
-  async getCache(@Param('key') key: any) {
-    return this.movieService.getCacheKey(key);
-  }
-
   @Get('genres')
   async findAllGenres(): Promise<Genre[]> {
-    console.log('Entrou no Genres');
     return this.movieService.findGenres();
   }
 
@@ -129,6 +123,11 @@ export class MovieController {
   @Get('userVote/:userId')
   async getVotesByUserId(@Param('userId') userId: number): Promise<Rating[]> {
     return this.movieService.getVotesByUserId(userId);
+  }
+
+  @Get('Cache/:key')
+  async getCache(@Param('key') key: any) {
+    return this.movieService.getCacheKey(key);
   }
 
 
