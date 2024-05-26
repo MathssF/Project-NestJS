@@ -11,7 +11,7 @@ import { Movie } from './entities/movies.entity';
 import { Rating } from 'src/user/entities/rating.entity';
 import { MovieR } from './movie.interface';
 import { voteResult } from './movie.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Movie')
 @Controller('movie')
@@ -54,6 +54,9 @@ export class MovieController {
   }
 
   @Post('vote/:id')
+  @ApiCreatedResponse({ description: 'Vote accepted' }) //, type: voteResult })
+  @ApiForbiddenResponse({ description: 'User does not have permission to vote or the vote value is not between 1 and 5' })
+  @ApiNotFoundResponse({ description: 'Movie or User not found' })
   async voteMovie(
     @Param('id', ParseIntPipe) movieId: number,
     @Body('rating', ParseIntPipe) rating: number,
@@ -66,6 +69,8 @@ export class MovieController {
 
 
   @Post()
+  @ApiCreatedResponse({ description: 'Movie created', type: Movie })
+  @ApiForbiddenResponse({ description: 'User does not have permission to create new' })
   async create(
     @Body() createMovieDto: CreateMovieDto,
     @Request() request: any,
@@ -80,6 +85,9 @@ export class MovieController {
   }
 
   @Put(':id')
+  @ApiOkResponse({ description: 'Movie updated', type: Movie })
+  @ApiNotFoundResponse({ description: 'Movie not found' })
+  @ApiForbiddenResponse({ description: 'User does not have permission to Edit' })
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
     @Body() movieData: EditMoviePost,

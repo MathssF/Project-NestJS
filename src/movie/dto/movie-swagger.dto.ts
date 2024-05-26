@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
+export class CreateMovieDto {
   @ApiProperty({
     example: 'A Viagem de Chihiro',
     description: `O nome do filme, usado para adicionar na lista, ou editar`,

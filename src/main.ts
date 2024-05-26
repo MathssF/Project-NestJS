@@ -15,6 +15,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  document.security = [{ bearerAuth: [] }];
   SwaggerModule.setup('api', app, document);
 
 

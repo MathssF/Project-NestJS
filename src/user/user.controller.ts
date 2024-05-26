@@ -9,7 +9,9 @@ import {
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
+@IsPublic()
 @ApiTags('Users')
 @Controller('user')
 export class UserController {
