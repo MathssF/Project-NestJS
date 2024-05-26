@@ -22,5 +22,8 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${process.env.DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: MKSdatabase
+  redis:
+    image: redis:alpine
+    restart: always
