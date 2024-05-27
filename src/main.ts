@@ -20,6 +20,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
 
-  await app.listen(process.env.PORT);
+  await app.listen(parseInt(process.env.REDIS_PORT, 10), () => {
+    console.log('Application is running on: http://localhost:3000');
+  });
 }
 bootstrap();
