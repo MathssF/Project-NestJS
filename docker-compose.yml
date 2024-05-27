@@ -26,7 +26,7 @@ services:
       POSTGRES_DB: MKSdatabase
   redis:
     container_name: redis-cache
-    image: redis
+    image: redis:alpine
     environment:
      -  REDIS_USER=redis
      -  REDIS_PASSWORD=redis
