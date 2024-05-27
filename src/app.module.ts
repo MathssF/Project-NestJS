@@ -20,10 +20,10 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     ConfigModule.forRoot({}),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.DB_HOST,
       port: 5432,
       database: 'MKSdatabase',
-      username: 'postgres',
+      username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       entities: [User, Genre, Movie, MovieGenre, Rating],
       synchronize: true,
