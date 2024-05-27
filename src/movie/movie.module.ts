@@ -21,7 +21,7 @@ import { RedisClientOptions } from 'redis';
     ttl: 3600000,
     socket: {
       host: process.env.REDIS_URL,
-      port: process.env.REDIS_PORT,
+      port: parseInt(process.env.REDIS_PORT, 10),
     }
   }),
   ],
