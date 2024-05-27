@@ -7,8 +7,8 @@ import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategys/local.strategy';
 import { JwtStrategy } from './strategys/jwt.strategy';
 import { LoginValidationMiddleware } from './middlewares/login-validation.middleware';
-import { jwtConstants as jwt1 } from './constant/constant';
-import { jwtConstants as jwt2 } from './constant/constant.example';
+// import { jwtConstants as jwt1 } from './constant/constant';
+// import { jwtConstants as jwt2 } from './constant/constant.example';
 
 
 // Obs: Aqui irá precisar ir no /src/auth/constant/constant.example.ts
@@ -19,7 +19,7 @@ import { jwtConstants as jwt2 } from './constant/constant.example';
   imports: [
     UserModule, PassportModule,
     JwtModule.register({
-      secret: jwt1.secret || jwt2.secret,
+      secret: process.env.JWT_SECRET, //|| jwt1.secret || jwt2.secret,
       // process.env.JWT_SECRET
       signOptions: { expiresIn: '24h' },
     }),

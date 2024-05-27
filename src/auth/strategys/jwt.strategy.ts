@@ -3,8 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserFromJwt } from 'src/models/UserFromJwt';
 import { UserPayload } from 'src/models/UserPayload';
-import { jwtConstants as jwt1 } from '../constant/constant';
-import { jwtConstants as jwt2 } from '../constant/constant.example';
+// import { jwtConstants as jwt1 } from '../constant/constant';
+// import { jwtConstants as jwt2 } from '../constant/constant.example';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       // secretOrKey: process.env.JWT_SECRET,
-      secretOrKey: jwt1.secret || jwt2.secret,
+      secretOrKey: process.env.JWT_SECRET, // || jwt1.secret || jwt2.secret,
     });
   }
 
