@@ -11,21 +11,21 @@ Para testar o projeto, baixe-o localmente, utilize o Swagger, disponível na rot
 ## Tecnologias Utilizadas
 
 
--> TypeScript: Utilizado para garantir tipagem estática e facilitar a manutenção do código.
+-> **TypeScript:** Utilizado para garantir tipagem estática e facilitar a manutenção do código.
 
--> NestJS: Esta foi minha primeira aplicação com NestJS. Aprendi bastante sobre a estrutura modular do framework e como ele facilita a criação de aplicações escaláveis e bem organizadas.
+-> **NestJS:** Esta foi minha primeira aplicação com NestJS. Aprendi bastante sobre a estrutura modular do framework e como ele facilita a criação de aplicações escaláveis e bem organizadas.
 
--> Swagger: Também foi minha primeira experiência com Swagger. Foi muito útil para documentar e testar a API de forma rápida e eficiente.
+-> **Swagger:** Também foi minha primeira experiência com Swagger. Foi muito útil para documentar e testar a API de forma rápida e eficiente.
 
--> JWT (JSON Web Token): Implementado para autenticação, garantindo segurança nas operações da aplicação.
+-> **JWT (JSON Web Token):** Implementado para autenticação, garantindo segurança nas operações da aplicação.
 
--> Redis: Utilizado para armazenamento em cache, melhorando a performance da aplicação.
+-> **Redis:** Utilizado para armazenamento em cache, melhorando a performance da aplicação.
 
--> TypeORM: Usado como ORM (Object-Relational Mapping) para gerenciar a comunicação com o banco de dados de forma mais intuitiva e eficiente.
+-> **TypeORM:** Usado como ORM (Object-Relational Mapping) para gerenciar a comunicação com o banco de dados de forma mais intuitiva e eficiente.
 
--> PostgreSQL: Utilizado como banco de dados relacional para armazenar de forma segura e eficiente as informações sobre os filmes.
+-> **PostgreSQL:** Utilizado como banco de dados relacional para armazenar de forma segura e eficiente as informações sobre os filmes.
 
--> Docker: Utilizado para containerizar a aplicação, garantindo um ambiente consistente de desenvolvimento e facilitando o deploy.
+-> **Docker:** Utilizado para containerizar a aplicação, garantindo um ambiente consistente de desenvolvimento e facilitando o deploy.
 
 ## Rotas e Lógica:
 
