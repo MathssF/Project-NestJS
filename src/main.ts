@@ -21,7 +21,7 @@ async function bootstrap() {
 
 
   await app.listen(parseInt(process.env.REDIS_PORT, 10), () => {
-    console.log('Application is running on: http://localhost:3000');
+    console.log('Application is running on your cloud');
   });
 }
 bootstrap();
