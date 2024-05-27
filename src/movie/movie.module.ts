@@ -20,8 +20,8 @@ import { RedisClientOptions } from 'redis';
     max: 100,
     ttl: 3600000,
     socket: {
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_URL,
+      port: process.env.REDIS_PORT,
     }
   }),
   ],
