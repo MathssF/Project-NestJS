@@ -3,7 +3,7 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "${PORT}:${PORT}"
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -17,6 +17,7 @@ services:
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
     depends_on:
       - db
+      - redis
   db:
     image: postgres
     restart: always
@@ -24,6 +25,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: MKSdatabase
+    port:
+      - "${DB_PORT}:${DB_PORT}"
   redis:
     container_name: redis-cache
     image: redis:alpine
