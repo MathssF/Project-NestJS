@@ -10,9 +10,9 @@ services:
       - DB_USERNAME=Developer
       - DB_PASSWORD=123456
       - DB_NAME=MKSdatabase
-      - REDIS_HOST=redishost
-      - REDIS_PORT=6379
-      - PORT=3000
+      - REDIS_HOST=localhost
+      - REDIS_PORT=${REDIS_PORT}
+      - PORT=${PORT}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
     depends_on:
@@ -32,4 +32,4 @@ services:
      -  REDIS_PASSWORD=redis
      -  REDIS_DB=projeto
     ports:
-      - "6379:6379"  
+      - "${REDIS_PORT}:${REDIS_PORT}"
