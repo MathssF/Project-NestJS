@@ -7,7 +7,7 @@ import { Genre } from './entities/genres.entity';
 import { Movie } from './entities/movies.entity';
 import { MovieGenre } from './entities/movie-genre.entity';
 import { Rating } from 'src/user/entities/rating.entity';
-import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { RedisClientOptions } from 'redis';
 

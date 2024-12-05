@@ -3,8 +3,6 @@ import {
   Get,
   Param,
   NotFoundException,
-  // Post,
-  // Body,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
@@ -17,7 +15,6 @@ import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    // private readonly dataSource: DataSource,
   ) {}
 
   @Get('create')
